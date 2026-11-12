@@ -1,0 +1,1864 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>碰鼻 · 界面稿</title>
+<meta name="description" content="碰鼻的界面稿和演示。这一份只有视频和页面。">
+<meta name="theme-color" content="#f1f2ec">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23d6ea47'/%3E%3Cpath transform='translate(50 52) scale(.74 .78) translate(-50 -52)' fill='%23221e1d' d='M50 28C60 22 80 22 89 32C97 41 94 56 84 64C76 71 66 74 60 79C56 82 53 84 50 84C47 84 44 82 40 79C34 74 24 71 16 64C6 56 3 41 11 32C20 22 40 22 50 28Z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=ZCOOL+QingKe+HuangYou&display=swap">
+<style>
+:root {
+  --paper: #f1f2ec;
+  --stage: #e7eae1;
+  --card: #ffffff;
+  --ink: #221e1d;
+  --text: #3a3634;
+  --muted: #6d6f68;
+  --line: #dcded5;
+  --ball: #d6ea47;
+  --ball-edge: #b9cc2e;
+  --display: "ZCOOL QingKe HuangYou", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --sans: "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  --gutter: clamp(20px, 5vw, 48px);
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.7 var(--sans); }
+.share-note { margin: 0; padding: 8px var(--gutter); background: var(--stage); color: var(--muted); font-size: 13px; line-height: 1.6; text-align: center; }
+a { color: inherit; text-underline-offset: 3px; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 8px; }
+[hidden] { display: none !important; }
+.wrap { width: 100%; max-width: calc(1160px + 2 * var(--gutter)); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+h1, h2, .display { font-family: var(--display); font-weight: 400; letter-spacing: .01em; }
+
+/* nav */
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 22px; padding-bottom: 10px; }
+.logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-size: 28px; line-height: 1; }
+.logo svg { width: 32px; height: 32px; flex: none; }
+.nav nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 22px; font-size: 15px; }
+.nav nav a { text-decoration: none; color: var(--muted); }
+.nav nav a:hover { color: var(--ink); }
+@media (max-width: 760px) { .nav nav .opt { display: none; } }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 20px 56px; align-items: end; padding-top: clamp(28px, 6vw, 76px); padding-bottom: clamp(24px, 3.4vw, 40px); }
+.hero h1 { margin: 0; font-size: clamp(58px, 9.6vw, 140px); line-height: .98; }
+.hero mark { position: relative; z-index: 0; background: none; color: inherit; white-space: nowrap; }
+.hero mark::before { content: ""; position: absolute; z-index: -1; left: -.05em; right: -.04em; top: .2em; bottom: .02em; border-radius: .14em; background: var(--ball); transform: rotate(-2deg); }
+.lede { margin: 0; font-size: clamp(16px, 1.55vw, 19px); color: var(--text); max-width: 25em; }
+.meta { margin: 14px 0 0; font: 13px/1.6 var(--mono); color: var(--muted); }
+@media (max-width: 880px) { .hero { grid-template-columns: 1fr; } }
+
+/* film player */
+.player { padding-bottom: clamp(64px, 9vw, 112px); }
+.stage { position: relative; overflow: hidden; border-radius: clamp(16px, 2.2vw, 28px); background: var(--stage); aspect-ratio: 16 / 9; }
+.stage[data-layout="tall"] { aspect-ratio: 3 / 4; max-width: 560px; margin: 0 auto; }
+.stage canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
+.big-play { position: absolute; left: 16px; bottom: 16px; width: 56px; height: 56px; margin: 0; border: 0; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; cursor: pointer; box-shadow: 0 12px 30px -12px rgba(34, 30, 29, .6); transition: opacity .2s, transform .2s cubic-bezier(.22, 1, .36, 1); }
+.stage[data-playing="true"] .big-play { opacity: 0; transform: scale(.88); pointer-events: none; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 16px; }
+.stage[data-layout="tall"] + .controls, .stage[data-layout="tall"] ~ .caption { max-width: 560px; margin-left: auto; margin-right: auto; }
+.ctrl { height: 40px; min-width: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.ctrl:hover { border-color: #c4c7bc; }
+.ctrl[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.ctrl:disabled { opacity: .45; cursor: default; }
+.ctrl.icon { padding: 0; width: 40px; }
+.time { font: 13px var(--mono); color: var(--muted); min-width: 10ch; }
+.chapters { flex: 1 1 360px; display: flex; gap: 4px; min-width: 0; padding: 6px 0; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; }
+.chapter { flex: var(--len) 1 0; min-width: 0; }
+.chapter .bar { display: block; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.chapter .bar i { display: block; height: 100%; background: var(--ink); transform-origin: left; transform: scaleX(var(--p, 0)); }
+.chapter .label { display: block; margin-top: 7px; font-size: 12px; line-height: 1.2; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chapter.on .label { color: var(--ink); font-weight: 600; }
+.seg { display: inline-flex; gap: 4px; }
+.right { display: inline-flex; flex-wrap: wrap; gap: 8px 10px; margin-left: auto; }
+.caption { margin: 14px 0 0; min-height: 1.7em; font-size: 15px; color: var(--text); }
+@media (max-width: 640px) { .time { display: none; } .right { margin-left: 0; } }
+
+/* sections */
+.section { padding-top: clamp(64px, 9vw, 120px); padding-bottom: clamp(64px, 9vw, 120px); border-top: 1px solid var(--line); }
+.section h2 { margin: 0 0 20px; font-size: clamp(38px, 5vw, 62px); line-height: 1.06; }
+.intro { margin: 0 0 14px; font-size: 18px; color: var(--text); max-width: 33em; }
+.split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(36px, 5vw, 80px); align-items: start; }
+@media (max-width: 920px) { .split { grid-template-columns: 1fr; } }
+
+.spec { display: grid; grid-template-columns: auto 1fr; gap: 12px 20px; margin: 30px 0 0; padding: 22px 0 0; border-top: 1px solid var(--line); }
+.spec dt { font: 600 15px/1.7 var(--mono); white-space: nowrap; }
+.spec dd { margin: 0; color: var(--text); font-size: 15px; }
+
+/* try it */
+.try { background: var(--card); border-radius: 26px; padding: clamp(14px, 2vw, 22px); }
+.try canvas { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; background: var(--stage); cursor: grab; touch-action: pan-y; }
+.try canvas.dragging { cursor: grabbing; }
+.slider { display: flex; align-items: center; gap: 12px; margin: 16px 4px 0; font-size: 13px; color: var(--muted); }
+.slider input { flex: 1; accent-color: var(--ink); }
+.readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 16px 0 0; }
+.readout div { padding: 12px 14px; border-radius: 16px; background: var(--paper); }
+.readout small { display: block; font-size: 12px; color: var(--muted); }
+.readout b { display: block; font: 600 20px/1.4 var(--mono); white-space: nowrap; }
+.readout b.word { font-family: var(--sans); font-size: 18px; }
+.readout .on { background: var(--ball); }
+.hint { margin: 12px 4px 0; font-size: 14px; color: var(--text); }
+
+/* sync */
+.steps { list-style: none; counter-reset: step; display: grid; gap: 24px; margin: 30px 0 0; padding: 0; }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 46px 1fr; gap: 16px; }
+.steps li::before { content: counter(step); display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--ink); color: var(--paper); font: 400 26px/1 var(--display); }
+.steps h3 { margin: 6px 0 4px; font-size: 18px; }
+.steps p { margin: 0; color: var(--text); }
+.phone-fig { margin: 0; }
+.phone { width: 316px; margin: 0 auto; padding: 12px; border-radius: 50px; background: var(--ink); box-shadow: 0 40px 70px -40px rgba(34, 30, 29, .55); }
+.phone .screen { position: relative; width: 292px; height: 600px; overflow: hidden; border-radius: 38px; background: var(--paper); }
+.phone iframe { display: block; width: 375px; height: 771px; border: 0; transform: scale(.7787); transform-origin: 0 0; }
+.phone-fig figcaption { margin-top: 16px; text-align: center; font-size: 14px; color: var(--muted); }
+
+/* ai */
+.ai-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 22px; align-items: stretch; margin-top: 40px; }
+.log { padding: 24px; border-radius: 24px; background: var(--ink); color: #e6e7df; font: 14px/1.6 var(--mono); }
+.log-h { margin-bottom: 12px; font-family: var(--sans); font-size: 13px; color: #a9aaa3; }
+.lr { display: grid; grid-template-columns: 5.2em 8.6em 1fr; gap: 10px; padding: 7px 0; border-top: 1px solid #3a3533; }
+.lr .b { color: var(--ball); }
+.arrow { align-self: center; font-size: 44px; line-height: 1; }
+.diary { position: relative; padding: 26px 28px; border-radius: 24px; background: var(--card); }
+.diary .badge { display: inline-block; margin-bottom: 14px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 999px; font: 12px/1.8 var(--mono); color: var(--muted); }
+.diary h3 { margin: 0 0 12px; font-size: 30px; line-height: 1.15; }
+.diary p { margin: 0; font-size: 16px; line-height: 1.9; }
+.checks { display: grid; gap: 4px; margin: 20px 0 0; padding: 16px 0 0; border-top: 1px dashed var(--line); list-style: none; font-size: 13px; color: var(--muted); }
+.ai-note { margin: 22px 0 0; max-width: 46em; font-size: 15px; color: var(--muted); }
+@media (max-width: 920px) { .ai-grid { grid-template-columns: 1fr; } .arrow { justify-self: center; transform: rotate(90deg); } }
+@media (max-width: 420px) { .lr { grid-template-columns: 4.6em 1fr; } .lr span:last-child { grid-column: 2; } }
+
+/* privacy */
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 34px 0 0; padding: 0; list-style: none; }
+.facts li { padding: 22px; border-radius: 22px; background: var(--card); }
+.facts h3 { margin: 0 0 6px; font-size: 18px; }
+.facts p { margin: 0; font-size: 15px; color: var(--text); }
+.limit { max-width: 48em; margin: 24px 0 0; padding: 16px 20px; border: 1px dashed var(--muted); border-radius: 18px; font-size: 15px; color: var(--text); }
+
+/* hardware */
+.stack-fig { margin: 0; padding: 18px; border-radius: 26px; background: var(--card); }
+.stack-fig svg { display: block; width: 100%; height: auto; }
+.bom-scroll { margin-top: 10px; overflow-x: auto; }
+.bom { width: 100%; min-width: 460px; margin-top: 0; border-collapse: collapse; font-size: 15px; }
+.bom th, .bom td { padding: 12px 10px 12px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.bom th { font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.bom .n { font-family: var(--mono); white-space: nowrap; }
+.bom tfoot td { border-bottom: 0; font-weight: 600; }
+.note { margin: 18px 0 0; font-size: 14px; color: var(--muted); }
+
+/* roadmap */
+.road { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 34px 0 0; padding: 0; list-style: none; }
+.road li { padding: 22px; border-radius: 22px; background: var(--card); }
+.road li.now { background: var(--ink); color: var(--paper); }
+.road .v { display: block; font-size: 34px; line-height: 1; }
+.road .st { display: block; margin-top: 8px; font: 12px var(--mono); color: var(--muted); }
+.road li.now .st { color: var(--ball); }
+.road p { margin: 12px 0 0; font-size: 15px; }
+.more { margin: 26px 0 0; font-size: 16px; color: var(--text); }
+@media (max-width: 920px) { .road { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .road { grid-template-columns: 1fr; } }
+
+footer { padding: 34px 0 52px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; }
+</style>
+</head>
+<body>
+
+<header class="wrap nav">
+  <a class="logo" href="#top">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#d6ea47"/><g transform="translate(50 52) scale(.74 .78) translate(-50 -52)"><path fill="#221e1d" d="M50 28C60 22 80 22 89 32C97 41 94 56 84 64C76 71 66 74 60 79C56 82 53 84 50 84C47 84 44 82 40 79C34 74 24 71 16 64C6 56 3 41 11 32C20 22 40 22 50 28Z"/><path fill="#d6ea47" d="M20 50C24 46 33 47 38 53C41 57 40 62 35 62C31 62 30 58 27 56C24 54 19 54 20 50Z"/><path fill="#d6ea47" d="M80 50C76 46 67 47 62 53C59 57 60 62 65 62C69 62 70 58 73 56C76 54 81 54 80 50Z"/></g></svg>
+    <span class="display">碰鼻</span>
+  </a>
+  <nav aria-label="页面导航">
+    <a class="opt" href="#sync">回家看</a>
+    <a class="opt" href="#ai">AI 日记</a>
+    <a class="opt" href="#privacy">隐私</a>
+    <a href="web/index.html">记录页</a>
+  </nav>
+</header>
+<p class="share-note">这是碰鼻的界面和演示。判定规则、硬件方案和需求文档还没有公开。</p>
+
+<main id="top">
+  <section class="wrap hero">
+    <h1>它今天碰了<br>谁的<mark>鼻子</mark>？</h1>
+    <div>
+      <p class="lede">碰鼻是挂在狗项圈上的小牌子。遛弯时它自动记下遇到的每一只狗，分得清碰了鼻子还是只是擦肩。牌子不发光也不出声，回家用手机看。</p>
+      <p class="meta">界面稿 · 演示数据</p>
+    </div>
+  </section>
+
+  <section class="wrap player" aria-label="演示动画">
+    <div class="stage" id="stage" data-layout="wide" data-playing="false">
+      <canvas id="film" role="img" aria-label="演示动画：布丁出门遛弯，项圈上的碰鼻记下擦肩而过的狗和碰了鼻子的豆豆；回家后长按牌子开出 Wi-Fi，手机连上查看记录，再生成一张社交卡片。"></canvas>
+      <button class="big-play" id="bigPlay" aria-label="播放演示">
+        <svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path d="M8 5.2v13.6L18.8 12z" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <div class="controls">
+      <button class="ctrl icon" id="play" aria-label="播放">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path id="playIcon" d="M8 5.2v13.6L18.8 12z" fill="currentColor"/></svg>
+      </button>
+      <span class="time" id="time">0:00 / 0:34</span>
+      <div class="chapters" id="chapters" role="slider" tabindex="0" aria-label="播放进度" aria-valuemin="0" aria-valuemax="34" aria-valuenow="0"></div>
+      <div class="right">
+        <div class="seg" role="group" aria-label="画幅">
+          <button class="ctrl" data-layout="wide" aria-pressed="true">横版</button>
+          <button class="ctrl" data-layout="tall" aria-pressed="false">竖版</button>
+        </div>
+        <button class="ctrl" id="sound" aria-pressed="false">声音</button>
+        <button class="ctrl" id="record">下载视频</button>
+      </div>
+    </div>
+    <p class="caption" id="caption"></p>
+  </section>
+
+  <section class="section" id="sync">
+    <div class="wrap split">
+      <div>
+        <h2>回家长按一下，用手机看</h2>
+        <p class="intro">牌子上没有屏幕。记录存在牌子里，回家以后用手机连上它自己开的 Wi-Fi 来看，苹果和安卓都行，不用装 App。</p>
+        <ol class="steps">
+          <li><div><h3>长按牌子 1.5 秒</h3><p>牌子开出一个叫 Pengbi-5BE1 的 Wi-Fi，后四位是这块牌子的编号。10 分钟没人连，它自己就关了。</p></div></li>
+          <li><div><h3>手机连上这个 Wi-Fi</h3><p>记录页会自动弹出来。手机顺便把时间同步给牌子，记录上的时间就准了。</p></div></li>
+          <li><div><h3>看记录，起名字，发卡片</h3><p>给常遇见的狗起个名字，下次就显示名字。当天的社交卡片可以直接存图。</p></div></li>
+        </ol>
+      </div>
+      <figure class="phone-fig">
+        <div class="phone"><div class="screen"><iframe src="web/index.html" title="碰鼻记录页，演示数据" loading="lazy"></iframe></div></div>
+        <figcaption>这是真实的记录页，现在显示的是演示数据，可以点进去看看。</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="ai">
+    <div class="wrap">
+      <h2>让 AI 把一天的记录写成狗的日记</h2>
+      <p class="intro">一天的记录可以收成狗自己的一小段话。右边是这个页面的示意。</p>
+      <div class="ai-grid">
+        <div class="log">
+          <div class="log-h">今天的记录</div>
+          <div class="lr"><span>07:44</span><span>陌生狗 88A0</span><span>擦肩 · 几米开外</span></div>
+          <div class="lr"><span>07:48</span><span>豆豆</span><span class="b">碰鼻 1 次</span></div>
+          <div class="lr"><span>07:55</span><span>可乐</span><span class="b">碰鼻 2 次</span></div>
+          <div class="lr"><span>08:03</span><span>陌生狗 5C64</span><span>擦肩 · 几米开外</span></div>
+          <div class="lr"><span>08:09</span><span>楼下的柯基</span><span>擦肩 · 就在身边</span></div>
+          <div class="lr"><span>08:16</span><span>陌生狗 7BE9</span><span>擦肩 · 远远路过</span></div>
+        </div>
+        <div class="arrow display" aria-hidden="true">→</div>
+        <article class="diary">
+          <span class="badge">示意稿</span>
+          <h3 class="display">今天碰了三次鼻子</h3>
+          <p>七点多出门，先遇见豆豆，我们鼻子贴着闻了好一会儿。可乐今天特别热情，跟我碰了两次。楼下的柯基又从我旁边走过去，还是没停下来。另外还有三只不认识的狗，下次见到再说。</p>
+          <ul class="checks">
+            <li>✓ 豆豆、可乐、楼下的柯基都在记录里</li>
+            <li>✓ 碰鼻 1 + 2 = 3 次，和记录一致</li>
+            <li>✓ 不认识的狗 3 只，和记录一致</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="privacy">
+    <div class="wrap">
+      <h2>只记狗，不记人</h2>
+      <ul class="facts">
+        <li><h3>不记位置</h3><p>牌子里没有 GPS，只记时间和信号强弱。</p></li>
+        <li><h3>不用注册</h3><p>没有账号，没有服务器，记录只存在牌子里。</p></li>
+        <li><h3>编号是随机的</h3><p>第一次开机时随机生成，和手机号、宠物芯片都没有关系。</p></li>
+        <li><h3>名字只在你这里</h3><p>你给别家狗起的名字存在自己的牌子里，对方看不到。</p></li>
+        <li><h3>热点可以加密</h3><p>设了热点密码之后，才允许把家里的 Wi-Fi 密码存进牌子。</p></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>碰鼻 · 界面稿 · 产品与设计：展皓</span>
+    <span><a href="web/index.html">记录页演示</a></span>
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+const $ = (s, el = document) => el.querySelector(s);
+const clamp = (v, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const span = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = (k) => 1 - (1 - k) ** 3;
+const easeIn = (k) => k ** 3;
+const easeInOut = (k) => (k < 0.5 ? 4 * k ** 3 : 1 - (-2 * k + 2) ** 3 / 2);
+const easeBack = (k) => 1 + 2.70158 * (k - 1) ** 3 + 1.70158 * (k - 1) ** 2;
+const fadeWindow = (t, a, b, f = 0.3) => clamp(Math.min((t - a) / f, (b - t) / f));
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    r = Math.min(Array.isArray(r) ? r[0] : r, w / 2, h / 2);
+    this.moveTo(x + r, y);
+    this.arcTo(x + w, y, x + w, y + h, r);
+    this.arcTo(x + w, y + h, x, y + h, r);
+    this.arcTo(x, y + h, x, y, r);
+    this.arcTo(x, y, x + w, y, r);
+    this.closePath();
+  };
+}
+
+const C = { stage: "#e7eae1", paper: "#f1f2ec", card: "#ffffff", ink: "#221e1d", text: "#3a3634", muted: "#6d6f68", line: "#dcded5", ball: "#d6ea47", ballEdge: "#b9cc2e" };
+const F = {
+  display: '"ZCOOL QingKe HuangYou", "PingFang SC", "Microsoft YaHei", sans-serif',
+  sans: '"PingFang SC", "HarmonyOS Sans SC", "MiSans", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif',
+  mono: 'ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace',
+};
+
+function text(g, s, x, y, { size = 16, family = "sans", weight = 400, color = C.ink, align = "left", base = "alphabetic" } = {}) {
+  g.font = `${weight} ${size}px ${F[family]}`;
+  g.fillStyle = color;
+  g.textAlign = align;
+  g.textBaseline = base;
+  g.fillText(s, x, y);
+}
+
+function pill(g, s, cx, cy, { size = 16, family = "sans", weight = 600, bg = C.card, fg = C.ink, stroke = null, padX = size * 0.8, h = size * 1.9 } = {}) {
+  g.font = `${weight} ${size}px ${F[family]}`;
+  const w = g.measureText(s).width + padX * 2;
+  g.beginPath();
+  g.roundRect(cx - w / 2, cy - h / 2, w, h, h / 2);
+  g.fillStyle = bg;
+  g.fill();
+  if (stroke) { g.lineWidth = Math.max(2, size * 0.1); g.strokeStyle = stroke; g.stroke(); }
+  text(g, s, cx, cy + size * 0.05, { size, family, weight, color: fg, align: "center", base: "middle" });
+  return w;
+}
+
+// ---------- nose prints: same algorithm as web/index.html, so a collar shows the same nose everywhere ----------
+
+function rng(seed) {
+  return () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const NOSE = new Path2D("M50 28C60 22 80 22 89 32C97 41 94 56 84 64C76 71 66 74 60 79C56 82 53 84 50 84C47 84 44 82 40 79C34 74 24 71 16 64C6 56 3 41 11 32C20 22 40 22 50 28Z");
+const NOSTRIL_L = new Path2D("M20 50C24 46 33 47 38 53C41 57 40 62 35 62C31 62 30 58 27 56C24 54 19 54 20 50Z");
+const NOSTRIL_R = new Path2D("M80 50C76 46 67 47 62 53C59 57 60 62 65 62C69 62 70 58 73 56C76 54 81 54 80 50Z");
+const TONES = [["#2a2524", "#47403e"], ["#5b3e31", "#7a5848"], ["#c4867f", "#dca69f"], ["#37373f", "#55555f"]];
+const noseCache = new Map();
+
+function noseSpec(peer) {
+  let n = noseCache.get(peer);
+  if (n) return n;
+  const seed = parseInt(peer, 16) >>> 0;
+  const r = rng(seed);
+  const [base, cell] = TONES[seed % TONES.length];
+  const sx = 0.68 + r() * 0.08, sy = 0.7 + r() * 0.1;
+  const cells = new Path2D();
+  for (let y = 20; y < 88; y += 6.4) {
+    for (let x = 6 + ((y / 6.4) % 2) * 3.2; x < 95; x += 6.4) {
+      const cx = x + (r() - 0.5) * 2.6, cy = y + (r() - 0.5) * 2.6, rr = 1.7 + r() * 1.3;
+      cells.moveTo(cx + rr, cy);
+      cells.arc(cx, cy, rr, 0, Math.PI * 2);
+    }
+  }
+  n = { base, cell, sx, sy, cells };
+  noseCache.set(peer, n);
+  return n;
+}
+
+function drawNose(g, peer, cx, cy, size, booped = false) {
+  const n = noseSpec(peer);
+  g.save();
+  g.translate(cx - size / 2, cy - size / 2);
+  g.scale(size / 100, size / 100);
+  g.beginPath();
+  g.arc(50, 50, 48.5, 0, Math.PI * 2);
+  g.fillStyle = booped ? C.ball : "#ffffff";
+  g.fill();
+  g.lineWidth = 1.5;
+  g.strokeStyle = booped ? "#c3d63a" : C.line;
+  g.stroke();
+  g.translate(50, 52);
+  g.scale(n.sx, n.sy);
+  g.translate(-50, -52);
+  g.fillStyle = n.base;
+  g.fill(NOSE);
+  g.save();
+  g.clip(NOSE);
+  g.fillStyle = n.cell;
+  g.fill(n.cells);
+  g.restore();
+  g.fillStyle = "#141110";
+  g.fill(NOSTRIL_L);
+  g.fill(NOSTRIL_R);
+  g.beginPath();
+  g.moveTo(50, 66);
+  g.lineTo(50, 83);
+  g.lineWidth = 2.6;
+  g.lineCap = "round";
+  g.strokeStyle = "#141110";
+  g.stroke();
+  g.translate(36, 35);
+  g.rotate(-0.175);
+  g.beginPath();
+  g.ellipse(0, 0, 10, 4, 0, 0, Math.PI * 2);
+  g.fillStyle = "rgba(255, 255, 255, .22)";
+  g.fill();
+  g.restore();
+}
+
+// ---------- dogs ----------
+
+const BREEDS = {
+  pudding: { peer: "3d9a5be1", name: "布丁", coat: "#e9c88f", shade: "#cda766", patch: "#f7ead1", ear: "flop", earColor: "#c89a5a", size: 1, leg: 40, body: 124, tail: "plume" },
+  doudou: { peer: "5be1a3f2", name: "豆豆", coat: "#2f2a29", shade: "#1e1a19", patch: "#f4f2ea", muzzle: "#f4f2ea", ear: "flop", earColor: "#1e1a19", size: 0.8, leg: 34, body: 106, tail: "plume" },
+  kele: { peer: "91c04d7e", name: "可乐", coat: "#7d4e35", shade: "#603a27", patch: "#d4a886", ear: "prick", earColor: "#603a27", size: 0.94, leg: 40, body: 118, tail: "curl" },
+  corgi: { peer: "c7d2190b", name: "楼下的柯基", coat: "#da8b45", shade: "#b86f30", patch: "#fbf3e6", muzzle: "#fbf3e6", ear: "big", earColor: "#c47a38", size: 0.95, leg: 22, body: 132, tail: "stub" },
+  strA: { peer: "2f6b88a0", name: "陌生狗", coat: "#a7aaa1", shade: "#8b8e85", patch: "#dcded6", ear: "flop", earColor: "#8b8e85", size: 0.95, leg: 42, body: 120, tail: "plume" },
+  strB: { peer: "0e9f5c64", name: "陌生狗", coat: "#5d6068", shade: "#474a51", patch: "#c9cbd0", ear: "prick", earColor: "#474a51", size: 0.9, leg: 38, body: 112, tail: "curl" },
+  strC: { peer: "a4417be9", name: "陌生狗", coat: "#cdb89c", shade: "#b19c80", patch: "#efe4d3", ear: "flop", earColor: "#ad9474", size: 1.05, leg: 44, body: 128, tail: "plume" },
+};
+const BODY_H = 50;
+const shortId = (peer) => peer.slice(4).toUpperCase();
+
+function geom(b) {
+  const top = -b.leg - BODY_H + 6;
+  return { top, neck: { x: b.body / 2 - 18, y: top + 4 }, tag: { x: b.body / 2 + 4, y: top + 30 }, leash: { x: b.body / 2 - 20, y: top - 4 } };
+}
+
+// Nose tip in the dog's own coordinates (facing right, before scaling), for a given head tilt.
+function noseLocal(b, tilt) {
+  const { neck } = geom(b);
+  const c = Math.cos(tilt), s = Math.sin(tilt);
+  return { x: neck.x + 72 * c + 27 * s, y: neck.y + 72 * s - 27 * c };
+}
+
+function drawDog(g, b, o) {
+  const { top, neck, tag } = geom(b);
+  const B = b.body, L = b.leg, amp = 0.42 * o.moving;
+  const OUT = 6;
+  g.save();
+  g.translate(o.x, o.y - o.bob);
+  g.scale(o.k * o.dir, o.k);
+  g.lineJoin = "round";
+  g.lineCap = "round";
+
+  const both = (build, fill, w = OUT) => {
+    g.save(); build(); g.lineWidth = w; g.strokeStyle = C.ink; g.stroke(); g.restore();
+    g.save(); build(); g.fillStyle = fill; g.fill(); g.restore();
+  };
+  const leg = (x, a) => { g.translate(x, -L + 2); g.rotate(a); g.beginPath(); g.roundRect(-7, -8, 14, L + 6, 7); };
+  const head = () => { g.translate(neck.x, neck.y); g.rotate(o.tilt); };
+
+  const tailPath = () => {
+    g.translate(-B / 2 + 10, top + 14);
+    g.rotate(-0.15 + Math.sin(o.wag) * 0.32);
+    g.beginPath();
+    g.moveTo(0, 0);
+    if (b.tail === "plume") g.quadraticCurveTo(-26, -6, -36, -36);
+    else if (b.tail === "curl") g.bezierCurveTo(-26, -8, -30, -40, -6, -40);
+    else g.lineTo(-14, -6);
+  };
+  const tw = b.tail === "stub" ? 15 : b.tail === "curl" ? 11 : 13;
+  g.save(); tailPath(); g.lineWidth = tw + OUT; g.strokeStyle = C.ink; g.stroke(); g.restore();
+  g.save(); tailPath(); g.lineWidth = tw; g.strokeStyle = b.coat; g.stroke(); g.restore();
+
+  both(() => leg(B / 2 - 32, Math.sin(o.phase + Math.PI) * amp), b.shade);
+  both(() => leg(-B / 2 + 32, Math.sin(o.phase) * amp), b.shade);
+
+  if (b.ear !== "flop") {
+    const big = b.ear === "big";
+    both(() => {
+      head();
+      g.beginPath();
+      if (big) { g.moveTo(-4, -30); g.lineTo(5, -78); g.quadraticCurveTo(10, -84, 16, -76); g.lineTo(34, -38); }
+      else { g.moveTo(0, -32); g.lineTo(8, -64); g.quadraticCurveTo(12, -70, 17, -63); g.lineTo(30, -38); }
+      g.closePath();
+    }, b.earColor);
+  }
+
+  const parts = [
+    [() => { g.beginPath(); g.roundRect(-B / 2, top, B, BODY_H, BODY_H / 2); }, b.coat],
+    [() => leg(B / 2 - 22, Math.sin(o.phase) * amp), b.coat],
+    [() => leg(-B / 2 + 22, Math.sin(o.phase + Math.PI) * amp), b.coat],
+    [() => { head(); g.beginPath(); g.arc(22, -20, 27, 0, Math.PI * 2); }, b.coat],
+    [() => { head(); g.beginPath(); g.roundRect(28, -36, 44, 26, 12); }, b.muzzle || b.coat],
+  ];
+  for (const [build] of parts) { g.save(); build(); g.lineWidth = OUT; g.strokeStyle = C.ink; g.stroke(); g.restore(); }
+  for (const [build, fill] of parts) { g.save(); build(); g.fillStyle = fill; g.fill(); g.restore(); }
+
+  g.save();
+  g.beginPath();
+  g.ellipse(B / 2 - 26, top + BODY_H - 14, 19, 11, -0.15, 0, Math.PI * 2);
+  g.fillStyle = b.patch;
+  g.fill();
+  g.restore();
+
+  if (b.ear === "flop") {
+    const sway = Math.sin(o.phase * 2) * 0.08 * o.moving;
+    both(() => {
+      head();
+      g.translate(10, -42);
+      g.rotate(sway);
+      g.beginPath();
+      g.moveTo(-2, 0);
+      g.bezierCurveTo(12, -8, 18, 4, 14, 18);
+      g.bezierCurveTo(11, 32, 0, 38, -6, 32);
+      g.bezierCurveTo(-12, 26, -12, 8, -2, 0);
+      g.closePath();
+    }, b.earColor, 5);
+  }
+
+  g.save();
+  head();
+  g.beginPath(); g.arc(31, -38, 3.8, 0, Math.PI * 2); g.fillStyle = C.ink; g.fill();
+  g.beginPath(); g.arc(32.3, -39.3, 1.2, 0, Math.PI * 2); g.fillStyle = "#ffffff"; g.fill();
+  g.beginPath(); g.ellipse(66, -28, 7.5, 6.5, 0, 0, Math.PI * 2); g.fillStyle = "#1b1817"; g.fill();
+  g.beginPath(); g.moveTo(50, -13); g.quadraticCurveTo(57, -10, 63, -14); g.lineWidth = 2.4; g.strokeStyle = C.ink; g.stroke();
+  g.restore();
+
+  g.beginPath(); g.moveTo(B / 2 - 20, top - 4); g.lineTo(B / 2 + 1, top + 14); g.lineWidth = 9; g.strokeStyle = C.ink; g.stroke();
+  g.beginPath(); g.moveTo(B / 2 + 1, top + 14); g.lineTo(tag.x, tag.y - 8); g.lineWidth = 2; g.stroke();
+  g.beginPath(); g.roundRect(tag.x - 9, tag.y - 9, 18, 18, 5); g.fillStyle = "#fbfbf6"; g.fill(); g.lineWidth = 2.5; g.stroke();
+  g.beginPath(); g.ellipse(tag.x, tag.y + 0.5, 4.2, 3.2, 0, 0, Math.PI * 2); g.fillStyle = C.ink; g.fill();
+  g.restore();
+
+  const kx = o.k * o.dir, ky = o.k, y0 = o.y - o.bob, nose = noseLocal(b, o.tilt), lead = geom(b).leash;
+  return {
+    tag: { x: o.x + tag.x * kx, y: y0 + tag.y * ky },
+    nose: { x: o.x + nose.x * kx, y: y0 + nose.y * ky },
+    leash: { x: o.x + lead.x * kx, y: y0 + lead.y * ky },
+    head: { x: o.x + (neck.x + 22) * kx, y: y0 + (neck.y - 60) * ky },
+  };
+}
+
+function drawLeash(g, from, dir, alpha = 1) {
+  if (alpha <= 0) return;
+  g.save();
+  g.globalAlpha *= alpha;
+  const ex = from.x - dir * 230, ey = -40;
+  g.beginPath();
+  g.moveTo(from.x, from.y);
+  g.quadraticCurveTo(lerp(from.x, ex, 0.5), lerp(from.y, ey, 0.5) + 60, ex, ey);
+  g.lineWidth = 2.5;
+  g.strokeStyle = C.ink;
+  g.stroke();
+  g.restore();
+}
+
+// Lower the first dog's head until its nose meets the second dog's nose; returns that tilt and the gap between them.
+function contactPose(a, b, tiltB = -0.06) {
+  const nb = noseLocal(b, tiltB);
+  const target = nb.y * b.size;
+  let lo = -0.4, hi = 0.8;
+  for (let i = 0; i < 32; i++) {
+    const mid = (lo + hi) / 2;
+    if (noseLocal(a, mid).y * a.size < target) lo = mid; else hi = mid;
+  }
+  const tilt = (lo + hi) / 2;
+  return { tilt, rel: noseLocal(a, tilt).x * a.size + nb.x * b.size - 1 };
+}
+
+const rssiAt = (meters) => -59 - 20 * Math.log10(Math.max(0.05, meters));
+const BOOP_RSSI = -55;
+function nearWord(v) {
+  if (v >= BOOP_RSSI) return "贴得很近";
+  if (v >= -68) return "就在身边";
+  if (v >= -80) return "几米开外";
+  return "远远路过";
+}
+
+// ---------- sound ----------
+
+const sound = {
+  on: false, ctx: null, master: null, dest: null,
+  ensure() {
+    if (!this.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      this.ctx = new AC();
+      this.master = this.ctx.createGain();
+      this.master.gain.value = 0.55;
+      this.master.connect(this.ctx.destination);
+    }
+    if (this.ctx.state === "suspended") this.ctx.resume();
+    return this.ctx;
+  },
+  play(kind) {
+    if (!this.on) return;
+    const ac = this.ensure();
+    if (!ac) return;
+    const now = ac.currentTime;
+    const voice = (type, f0, f1, peak, dur, delay = 0) => {
+      const o = ac.createOscillator(), gn = ac.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(f0, now + delay);
+      o.frequency.exponentialRampToValueAtTime(f1, now + delay + dur);
+      gn.gain.setValueAtTime(0.0001, now + delay);
+      gn.gain.exponentialRampToValueAtTime(peak, now + delay + 0.008);
+      gn.gain.exponentialRampToValueAtTime(0.0001, now + delay + dur);
+      o.connect(gn).connect(this.master);
+      o.start(now + delay);
+      o.stop(now + delay + dur + 0.02);
+    };
+    if (kind === "boop") { voice("sine", 780, 360, 0.5, 0.2); voice("triangle", 1560, 900, 0.1, 0.12); }
+    if (kind === "tap") voice("sine", 1900, 1200, 0.18, 0.05);
+    if (kind === "chime") { voice("sine", 660, 640, 0.25, 0.25); voice("sine", 990, 980, 0.22, 0.35, 0.12); }
+    if (kind === "thunk") {
+      voice("sine", 160, 60, 0.6, 0.14);
+      const buf = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.08), ac.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length) ** 2;
+      const src = ac.createBufferSource(), lp = ac.createBiquadFilter(), gn = ac.createGain();
+      src.buffer = buf;
+      lp.type = "lowpass";
+      lp.frequency.value = 700;
+      gn.gain.value = 0.5;
+      src.connect(lp).connect(gn).connect(this.master);
+      src.start(now);
+    }
+  },
+};
+
+// ---------- film: copy ----------
+
+const D = /*display-text:start*/ {
+  brand: "碰鼻",
+  tagline: "挂在狗项圈上的开源小牌子",
+  credit: "产品与设计 · 展皓",
+  boop1: "碰鼻 +1",
+  fast: "快进",
+  card1: "布丁遇见了 6 只狗",
+  card2: "碰了 3 次鼻子",
+} /*display-text:end*/;
+
+const CAP = {
+  walk: "早上 7:41，布丁出门遛弯，项圈上挂着碰鼻。",
+  ping: "牌子每 0.25 秒报一次自己的编号，也在听附近有谁。",
+  pass: "对面走过一只狗。离得远，信号弱，记一次擦肩。",
+  meet: "豆豆迎面走过来。",
+  near: "鼻子凑到一起，信号超过了碰鼻门槛。",
+  boop: "连续 2 秒都在门槛以上，记一次碰鼻。",
+  remember: "两块牌子都记下了对方的编号，下次见面还认得。",
+  more: "一路上又遇见 4 只狗。牌子不亮也不响，只管记。",
+  press: "回家长按牌子 1.5 秒，它会开出一个 Wi-Fi。",
+  phone: "手机连上它，记录页自动弹出来，不用装 App。",
+  card: "再生成一张今天的社交卡片，发到狗友群。",
+};
+
+// ---------- film: script ----------
+
+const FILM_LEN = 34;
+const CHAPTERS = [
+  { t: 0, label: "出门" }, { t: 3.5, label: "擦肩" }, { t: 9.4, label: "碰鼻" },
+  { t: 18.8, label: "一路上" }, { t: 23, label: "回家" }, { t: 30.2, label: "分享" },
+];
+const LAYOUTS = {
+  wide: {
+    W: 1280, H: 720, exportW: 1920, exportH: 1080, heroX: 420,
+    near: 642, far: 516, farWalk: [496, 524], grass: [524, 566], buildings: 470, trees: 500,
+    signal: { x: 28, y: 24, w: 330, u: 1 }, ledger: { x: 922, y: 24, w: 330, u: 1, rows: 4 },
+    clock: { x: 640, y: 70, size: 46 }, caption: { y: 676, size: 24 },
+    tag: { x: 640, y: 360 }, tagAside: { x: 370, y: 360, s: 0.8 },
+    phone: { x: 900, y: 360, s: 1, fromX: 1560, fromY: 360, exitX: 520, exitY: 0 },
+    card: { x: 640, y: 360, s: 1 }, cardEnd: { x: 900, y: 360, s: 1 },
+    title: { x: 110, y: 392, size: 124, align: "left" },
+  },
+  tall: {
+    W: 720, H: 960, exportW: 1080, exportH: 1440, heroX: 250,
+    near: 846, far: 714, farWalk: [694, 722], grass: [722, 764], buildings: 668, trees: 700,
+    signal: { x: 24, y: 118, w: 672, u: 1.45 }, ledger: { x: 24, y: 350, w: 672, u: 1.45, rows: 2 },
+    clock: { x: 360, y: 82, size: 58 }, caption: { y: 912, size: 30 },
+    tag: { x: 360, y: 400 }, tagAside: { x: 360, y: 232, s: 0.6 },
+    phone: { x: 360, y: 650, s: 0.78, fromX: 360, fromY: 1320, exitX: 0, exitY: 700 },
+    card: { x: 360, y: 470, s: 1.2 }, cardEnd: { x: 360, y: 610, s: 0.92 },
+    title: { x: 360, y: 214, size: 104, align: "center" },
+  },
+};
+const PX_PER_M = 240, STRIDE = 118, FAR_SCALE = 0.62, FAR_DEPTH_M = 4, DT = 1 / 120, SAMPLE_DT = 0.25;
+const WALK = 190, FAST = WALK * 3.2;
+
+function puddingSpeed(t) {
+  if (t < 10.4) return WALK;
+  if (t < 11.7) return WALK * (1 - easeInOut(span(t, 10.4, 11.7)));
+  if (t < 16.0) return 0;
+  if (t < 17.0) return WALK * easeInOut(span(t, 16.0, 17.0));
+  if (t < 19.0) return WALK;
+  if (t < 19.35) return lerp(WALK, FAST, easeInOut(span(t, 19.0, 19.35)));
+  if (t < 19.5) return FAST;
+  if (t < 19.75) return FAST * (1 - easeInOut(span(t, 19.5, 19.75)));
+  if (t < 20.45) return 0;
+  if (t < 20.7) return FAST * easeInOut(span(t, 20.45, 20.7));
+  if (t < 22.4) return FAST;
+  if (t < 22.9) return lerp(FAST, WALK, easeInOut(span(t, 22.4, 22.9)));
+  if (t < 23.3) return WALK * (1 - easeInOut(span(t, 22.9, 23.3)));
+  return 0;
+}
+
+const POSE_D = contactPose(BREEDS.pudding, BREEDS.doudou);
+const POSE_K = contactPose(BREEDS.pudding, BREEDS.kele);
+const CONTACTS = [
+  { id: "doudou", from: 11.4, to: 15.95, ramp: 0.6, tilt: POSE_D.tilt },
+  { id: "kele", from: 19.55, to: 20.45, ramp: 0.2, tilt: POSE_K.tilt },
+];
+const BASE_TILT = -0.06;
+
+function contactAmount(t, c) {
+  return easeInOut(span(t, c.from, c.from + c.ramp)) * (1 - easeInOut(span(t, c.to, c.to + c.ramp * 0.7)));
+}
+
+const ACTOR_SPECS = [
+  { id: "strA", keys: [[4.0, 1080, 1], [8.6, -800, 1, "linear"]] },
+  { id: "doudou", leash: true, keys: [[9.5, 1050, 0], [12.0, POSE_D.rel, 0, "out"], [15.9, POSE_D.rel, 0], [16.9, 140, 0.85], [19.2, -900, 1, "linear"]] },
+  { id: "kele", leash: true, keys: [[19.05, 1150, 0], [19.75, POSE_K.rel, 0, "out"], [20.45, POSE_K.rel, 0], [20.8, 140, 0.85], [21.6, -900, 1, "linear"]] },
+  { id: "strB", keys: [[20.6, 1150, 1], [21.7, -800, 1, "linear"]] },
+  { id: "corgi", keys: [[21.1, 1150, 0.55], [22.3, -800, 0.55, "linear"]] },
+  { id: "strC", keys: [[21.8, 1250, 1], [22.9, -700, 1, "linear"]] },
+];
+
+const N_STEPS = Math.ceil(FILM_LEN / DT) + 2;
+const PUD = { x: new Float32Array(N_STEPS), phase: new Float32Array(N_STEPS), speed: new Float32Array(N_STEPS), wag: new Float32Array(N_STEPS) };
+(() => {
+  let x = 200, ph = 0, wag = 0;
+  for (let i = 0; i < N_STEPS; i++) {
+    const t = i * DT, v = puddingSpeed(t);
+    const happy = Math.max(...CONTACTS.map((c) => contactAmount(t, c)));
+    PUD.x[i] = x; PUD.phase[i] = ph; PUD.speed[i] = v; PUD.wag[i] = wag;
+    x += v * DT;
+    ph += (v * DT / STRIDE) * Math.PI * 2;
+    wag += (5 + 8 * happy) * DT;
+  }
+})();
+
+function at(arr, t, t0 = 0) {
+  const f = clamp((t - t0) / DT, 0, arr.length - 1.001);
+  const i = Math.floor(f);
+  return arr[i] + (arr[i + 1] - arr[i]) * (f - i);
+}
+
+function keyAt(keys, t) {
+  if (t <= keys[0][0]) return [keys[0][1], keys[0][2]];
+  for (let i = 1; i < keys.length; i++) {
+    const [ta, ra, la] = keys[i - 1];
+    const [tb, rb, lb, ease] = keys[i];
+    if (t <= tb) {
+      const u = span(t, ta, tb);
+      const e = ease === "linear" ? u : ease === "out" ? easeOut(u) : easeInOut(u);
+      return [lerp(ra, rb, e), lerp(la, lb, e)];
+    }
+  }
+  const last = keys[keys.length - 1];
+  return [last[1], last[2]];
+}
+
+const ACTORS = {};
+for (const spec of ACTOR_SPECS) {
+  const b = BREEDS[spec.id];
+  const t0 = spec.keys[0][0], t1 = spec.keys[spec.keys.length - 1][0];
+  const n = Math.ceil((t1 - t0) / DT) + 2;
+  const a = { ...spec, b, t0, t1, x: new Float32Array(n), lane: new Float32Array(n), phase: new Float32Array(n), speed: new Float32Array(n), wag: new Float32Array(n) };
+  const contact = CONTACTS.find((c) => c.id === spec.id);
+  let ph = 0, wag = spec.id.length, prev = null;
+  for (let i = 0; i < n; i++) {
+    const t = t0 + i * DT;
+    const [rel, lane] = keyAt(spec.keys, t);
+    const x = at(PUD.x, t) + rel;
+    const k = lerp(1, FAR_SCALE, lane) * b.size;
+    if (prev !== null) ph += (Math.abs(x - prev) / (STRIDE * k)) * Math.PI * 2;
+    a.speed[i] = prev === null ? 0 : (x - prev) / DT;
+    a.x[i] = x; a.lane[i] = lane; a.phase[i] = ph; a.wag[i] = wag;
+    wag += (6 + (contact ? 8 * contactAmount(t, contact) : 0)) * DT;
+    prev = x;
+  }
+  a.speed[0] = a.speed[1];
+  ACTORS[spec.id] = a;
+}
+
+function actorAt(a, t) {
+  if (t < a.t0 || t > a.t1) return null;
+  return { x: at(a.x, t, a.t0), lane: at(a.lane, t, a.t0), phase: at(a.phase, t, a.t0), speed: at(a.speed, t, a.t0), wag: at(a.wag, t, a.t0) };
+}
+
+function puddingAt(t) {
+  let tilt = BASE_TILT;
+  for (const c of CONTACTS) tilt += (c.tilt - BASE_TILT) * contactAmount(t, c);
+  return { x: at(PUD.x, t), phase: at(PUD.phase, t), speed: at(PUD.speed, t), wag: at(PUD.wag, t), tilt };
+}
+
+// The HUD runs the same rule as the firmware: smooth the signal, then count a boop after 2 s above the threshold.
+const TARGETS = [{ id: "strA", from: 4.0, to: 9.3 }, { id: "doudou", from: 9.5, to: 18.8 }];
+const SAMPLES = [];
+let BOOP_T = 14;
+(() => {
+  const r = rng(20261112);
+  const pudTag = geom(BREEDS.pudding).tag.x;
+  let cur = null, smooth = 0, active = false, since = 0, lastClose = -1e9, counted = false, boops = 0;
+  for (let k = 0; k * SAMPLE_DT <= FILM_LEN; k++) {
+    const t = k * SAMPLE_DT;
+    const target = TARGETS.find((x) => t >= x.from && t < x.to);
+    const s = target && actorAt(ACTORS[target.id], t);
+    if (!s) { SAMPLES.push(null); continue; }
+    const b = BREEDS[target.id];
+    const theirTag = s.x - geom(b).tag.x * lerp(1, FAR_SCALE, s.lane) * b.size;
+    const dx = (theirTag - (at(PUD.x, t) + pudTag)) / PX_PER_M;
+    const raw = rssiAt(Math.hypot(dx, s.lane * FAR_DEPTH_M)) + (r() + r() + r() - 1.5) * 3.4;
+    if (cur !== target.id) { cur = target.id; smooth = raw; active = false; counted = false; boops = 0; }
+    else smooth += 0.35 * (raw - smooth);
+    const close = smooth >= BOOP_RSSI, ms = t * 1000;
+    if (close) {
+      if (!active || ms - lastClose > 1500) { active = true; since = t; counted = false; }
+      lastClose = ms;
+      if (!counted && t - since >= 2) {
+        counted = true;
+        boops++;
+        if (target.id === "doudou" && boops === 1) BOOP_T = t;
+      }
+    } else if (active && ms - lastClose > 1500) active = false;
+    SAMPLES.push({ t, id: target.id, raw, smooth, close, active, since, counted, boops });
+  }
+})();
+const sampleAt = (t) => SAMPLES[Math.min(SAMPLES.length - 1, Math.floor(t / SAMPLE_DT + 1e-6))];
+
+const STAMP_FLY = [BOOP_T + 0.9, BOOP_T + 1.6];
+const LEDGER = [
+  { t: 7.6, time: "07:44", id: "strA", boops: 0 },
+  { t: STAMP_FLY[1], time: "07:48", id: "doudou", boops: 1 },
+  { t: 20.3, time: "07:55", id: "kele", boops: 2 },
+  { t: 21.3, time: "08:03", id: "strB", boops: 0 },
+  { t: 21.9, time: "08:09", id: "corgi", boops: 0 },
+  { t: 22.5, time: "08:16", id: "strC", boops: 0 },
+];
+const CLOCK = [[0, 461], [4, 463], [7.6, 464], [9.5, 466], [12, 468], [19, 470], [19.75, 475], [20.45, 476], [22.5, 496], [23, 498]];
+const CAPTIONS = [
+  [0.3, 3.4, CAP.walk], [3.5, 6.2, CAP.ping], [6.2, 9.3, CAP.pass], [9.5, 11.8, CAP.meet],
+  [11.8, BOOP_T - 0.2, CAP.near], [BOOP_T - 0.2, 16.6, CAP.boop], [16.6, 18.8, CAP.remember], [18.9, 22.9, CAP.more],
+  [24.4, 27.2, CAP.press], [27.3, 30.4, CAP.phone], [30.4, 31.9, CAP.card],
+];
+const EVENTS = [
+  { t: BOOP_T, s: "boop" }, { t: STAMP_FLY[1], s: "thunk" }, { t: 20.3, s: "thunk" },
+  { t: 25.0, s: "tap" }, { t: 26.5, s: "chime" }, { t: 28.35, s: "tap" }, { t: 30.3, s: "tap" },
+];
+const ZOOM = [23.0, 24.2];
+const ZOOM_MAX = 176 / 18;
+const VIEWER_IN = [28.9, 29.3];
+
+function clockAt(t) {
+  let m = CLOCK[CLOCK.length - 1][1];
+  for (let i = 1; i < CLOCK.length; i++) {
+    if (t <= CLOCK[i][0]) { m = lerp(CLOCK[i - 1][1], CLOCK[i][1], span(t, CLOCK[i - 1][0], CLOCK[i][0])); break; }
+  }
+  m = Math.floor(m);
+  return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+}
+
+const today = new Date();
+const dayLabel = (back) => { const d = new Date(today); d.setDate(d.getDate() - back); return `${d.getMonth() + 1}月${d.getDate()}日`; };
+
+// ---------- film: street ----------
+
+const SCENERY = (() => {
+  const r = rng(7741);
+  const buildings = [], trees = [];
+  for (let x = 0; x < 2600;) {
+    const w = 90 + r() * 110;
+    buildings.push({ x, w, h: 110 + r() * 170, tone: r() < 0.5 ? "#d7dbd0" : "#dde0d6", windows: r() < 0.75 });
+    x += w + 12 + r() * 40;
+  }
+  for (let x = 40; x < 1900;) {
+    trees.push({ x, h: 70 + r() * 40, r: 36 + r() * 20, tone: r() < 0.5 ? "#c4cdb6" : "#bac5ab" });
+    x += 190 + r() * 130;
+  }
+  return { buildings, trees, lamps: [120, 1070] };
+})();
+const wrapX = (x, off, period, margin) => ((((x - off) % period) + period) % period) - margin;
+
+function drawBackdrop(g, L, cam) {
+  const off1 = cam * 0.12, off2 = cam * 0.42;
+  for (const b of SCENERY.buildings) {
+    const x = wrapX(b.x, off1, 2600, 220);
+    if (x > L.W + 20) continue;
+    g.fillStyle = b.tone;
+    g.fillRect(x, L.buildings - b.h, b.w, b.h);
+    if (b.windows) {
+      g.fillStyle = "#e4e7de";
+      for (let y = L.buildings - b.h + 18; y < L.buildings - 24; y += 30) {
+        for (let wx = x + 14; wx < x + b.w - 20; wx += 26) g.fillRect(wx, y, 11, 15);
+      }
+    }
+  }
+  g.lineCap = "round";
+  for (const lx of SCENERY.lamps) {
+    const x = wrapX(lx, off2, 1900, 200);
+    if (x > L.W + 40) continue;
+    g.beginPath(); g.moveTo(x, L.trees); g.lineTo(x, L.trees - 226); g.quadraticCurveTo(x + 4, L.trees - 238, x + 22, L.trees - 236);
+    g.lineWidth = 5; g.strokeStyle = "#7d8178"; g.stroke();
+    g.beginPath(); g.roundRect(x + 16, L.trees - 242, 28, 10, 5); g.fillStyle = "#7d8178"; g.fill();
+  }
+  for (const tr of SCENERY.trees) {
+    const x = wrapX(tr.x, off2, 1900, 200);
+    if (x > L.W + 80) continue;
+    g.beginPath(); g.moveTo(x, L.trees); g.lineTo(x, L.trees - tr.h); g.lineWidth = 7; g.strokeStyle = "#9a9e92"; g.stroke();
+    g.fillStyle = tr.tone;
+    g.beginPath();
+    g.arc(x, L.trees - tr.h - tr.r * 0.45, tr.r, 0, Math.PI * 2);
+    g.arc(x - tr.r * 0.62, L.trees - tr.h + 6, tr.r * 0.7, 0, Math.PI * 2);
+    g.arc(x + tr.r * 0.66, L.trees - tr.h + 4, tr.r * 0.72, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.fillStyle = "#dfe2d8";
+  g.fillRect(0, L.farWalk[0], L.W, L.farWalk[1] - L.farWalk[0]);
+  g.fillStyle = "#d3d6cc";
+  g.fillRect(0, L.farWalk[0], L.W, 2);
+  g.fillStyle = "#d2dac5";
+  g.fillRect(0, L.grass[0], L.W, L.grass[1] - L.grass[0]);
+  g.strokeStyle = "#b8c3a6";
+  g.lineWidth = 2;
+  for (let i = 0; i < 40; i++) {
+    const x = wrapX(i * 52, cam * 0.9, 2080, 40);
+    if (x > L.W + 10) continue;
+    const y = L.grass[0] + 14 + ((i * 7) % 18);
+    g.beginPath(); g.moveTo(x - 5, y - 7); g.lineTo(x, y); g.lineTo(x + 5, y - 8); g.stroke();
+  }
+  g.fillStyle = "#eceee7";
+  g.fillRect(0, L.grass[1], L.W, L.H - L.grass[1]);
+  g.fillStyle = "#d6d9cf";
+  g.fillRect(0, L.grass[1], L.W, 5);
+  g.strokeStyle = "#e0e2d9";
+  g.lineWidth = 2;
+  for (let i = 0; i < 12; i++) {
+    const x = wrapX(i * 200, cam, 2400, 60);
+    if (x > L.W + 10) continue;
+    g.beginPath(); g.moveTo(x, L.grass[1] + 6); g.lineTo(x - 26, L.H); g.stroke();
+  }
+}
+
+function drawRipples(g, p, t, color, from = 0.6) {
+  g.save();
+  g.lineWidth = 2;
+  for (let k = Math.floor((t - 1) / 0.25); k <= Math.floor(t / 0.25); k++) {
+    const age = t - k * 0.25;
+    if (k * 0.25 < from || age < 0 || age > 1) continue;
+    g.globalAlpha = 0.32 * (1 - age);
+    g.beginPath();
+    g.arc(p.x, p.y, 10 + age * 105, 0, Math.PI * 2);
+    g.strokeStyle = color;
+    g.stroke();
+  }
+  g.restore();
+}
+
+function calloutChip(g, s, x, y, alpha, anchor) {
+  if (alpha <= 0) return;
+  g.save();
+  g.globalAlpha *= alpha;
+  if (anchor) {
+    g.beginPath(); g.moveTo(anchor.x, anchor.y); g.lineTo(x, y + 14);
+    g.lineWidth = 1.5; g.strokeStyle = C.ink; g.stroke();
+  }
+  g.translate(x, y);
+  g.scale(lerp(0.85, 1, easeOut(alpha)), lerp(0.85, 1, easeOut(alpha)));
+  pill(g, s, 0, 0, { size: 15, family: "mono", weight: 600, bg: C.card, fg: C.ink, stroke: C.ink });
+  g.restore();
+}
+
+function sticker(g, s, x, y, k, rot = -0.07) {
+  if (k <= 0) return;
+  g.save();
+  g.translate(x, y);
+  g.rotate(rot);
+  g.scale(k, k);
+  pill(g, s, 0, 0, { size: 30, family: "display", weight: 400, bg: C.ball, fg: C.ink, stroke: C.ink, padX: 20, h: 58 });
+  g.restore();
+}
+
+function burst(g, x, y, k) {
+  if (k <= 0 || k >= 1) return;
+  g.save();
+  g.strokeStyle = C.ink;
+  g.lineWidth = 3;
+  g.lineCap = "round";
+  g.globalAlpha = 1 - k;
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2 + 0.2;
+    const r0 = 26 + k * 30, r1 = r0 + 14;
+    g.beginPath(); g.moveTo(x + Math.cos(a) * r0, y + Math.sin(a) * r0); g.lineTo(x + Math.cos(a) * r1, y + Math.sin(a) * r1); g.stroke();
+  }
+  g.restore();
+}
+
+function streetCamera(t, L) {
+  return Math.max(0, at(PUD.x, t) - L.heroX);
+}
+
+function puddingDrawOpts(t, L) {
+  const p = puddingAt(t);
+  const moving = clamp(p.speed / 110);
+  const cam = streetCamera(t, L);
+  return { x: p.x - cam, y: L.near, k: 1, dir: 1, phase: p.phase, moving, wag: p.wag, tilt: p.tilt, bob: Math.abs(Math.sin(p.phase)) * 2.4 * moving };
+}
+
+function drawStreet(g, t, L) {
+  const cam = streetCamera(t, L);
+  drawBackdrop(g, L, cam);
+
+  const dogs = [];
+  for (const id in ACTORS) {
+    const a = ACTORS[id], s = actorAt(a, t);
+    if (!s) continue;
+    const x = s.x - cam;
+    if (x < -260 || x > L.W + 260) continue;
+    const moving = clamp(Math.abs(s.speed) / 110);
+    const contact = CONTACTS.find((c) => c.id === id);
+    dogs.push({
+      id, a, lane: s.lane,
+      opts: { x, y: lerp(L.near, L.far, s.lane), k: lerp(1, FAR_SCALE, s.lane) * a.b.size, dir: -1, phase: s.phase, moving, wag: s.wag, tilt: BASE_TILT + (contact ? 0.02 * Math.sin(t * 9) * contactAmount(t, contact) : 0), bob: Math.abs(Math.sin(s.phase)) * 2.4 * moving },
+    });
+  }
+  dogs.sort((p, q) => q.lane - p.lane);
+
+  const points = {};
+  for (const d of dogs) {
+    points[d.id] = drawDog(g, d.a.b, d.opts);
+    if (d.a.leash) drawLeash(g, points[d.id].leash, -1, 1 - d.lane * 1.4);
+  }
+  const po = puddingDrawOpts(t, L);
+  points.pudding = drawDog(g, BREEDS.pudding, po);
+  drawLeash(g, points.pudding.leash, 1);
+
+  if (t < 18.8) {
+    const sample = sampleAt(t);
+    const closeNow = sample && sample.id === "doudou" && sample.active;
+    drawRipples(g, points.pudding.tag, t, closeNow ? C.ballEdge : C.ink);
+    for (const id of ["strA", "doudou"]) if (points[id]) drawRipples(g, points[id].tag, t, closeNow && id === "doudou" ? C.ballEdge : C.ink);
+  }
+
+  calloutChip(g, "编号 5BE1", points.pudding.tag.x + 70, points.pudding.tag.y - 120, fadeWindow(t, 1.0, 3.6, 0.3), points.pudding.tag);
+  if (points.strA) calloutChip(g, "收到 88A0", points.strA.head.x, points.strA.head.y - 24, fadeWindow(t, 4.9, 7.6, 0.3));
+  if (points.doudou) calloutChip(g, "收到 A3F2", points.doudou.head.x, points.doudou.head.y - 26, fadeWindow(t, 10.0, 11.7, 0.3));
+
+  if (points.doudou && t > 11 && t < STAMP_FLY[0] + 0.1) {
+    const c = { x: (points.pudding.nose.x + points.doudou.nose.x) / 2, y: (points.pudding.nose.y + points.doudou.nose.y) / 2 };
+    const s = sampleAt(t);
+    if (s && s.id === "doudou" && s.active && t < BOOP_T + 0.45) {
+      const p = clamp((t - s.since) / 2);
+      g.save();
+      g.globalAlpha = 1 - span(t, BOOP_T + 0.1, BOOP_T + 0.45);
+      g.lineCap = "round";
+      g.beginPath(); g.arc(c.x, c.y, 34, 0, Math.PI * 2); g.lineWidth = 6; g.strokeStyle = "rgba(34, 30, 29, .14)"; g.stroke();
+      g.beginPath(); g.arc(c.x, c.y, 34, -Math.PI / 2, -Math.PI / 2 + p * Math.PI * 2); g.strokeStyle = C.ballEdge; g.stroke();
+      g.restore();
+    }
+    burst(g, c.x, c.y, span(t, BOOP_T, BOOP_T + 0.45));
+    const k = t < BOOP_T ? 0 : reduceMotion.matches ? 1 : easeBack(span(t, BOOP_T, BOOP_T + 0.35));
+    sticker(g, D.boop1, c.x, c.y - 96, k * (1 - span(t, STAMP_FLY[0] - 0.1, STAMP_FLY[0] + 0.1)));
+  }
+  return points;
+}
+
+// ---------- film: HUD ----------
+
+function card(g, x, y, w, h, r, alpha = 1) {
+  g.save();
+  g.globalAlpha *= alpha;
+  g.shadowColor = "rgba(34, 30, 29, .10)";
+  g.shadowBlur = 24;
+  g.shadowOffsetY = 8;
+  g.beginPath();
+  g.roundRect(x, y, w, h, r);
+  g.fillStyle = C.card;
+  g.fill();
+  g.restore();
+}
+
+function drawSignal(g, t, L) {
+  const a = fadeWindow(t, 3.4, 18.8, 0.35);
+  if (a <= 0) return;
+  const { x, y, w, u } = L.signal;
+  const h = 150 * u, pad = 18 * u;
+  g.save();
+  g.globalAlpha = a;
+  card(g, x, y, w, h, 18 * u);
+  const s = sampleAt(t);
+  text(g, "收到的信号", x + pad, y + 32 * u, { size: 15 * u, color: C.muted, weight: 500 });
+  if (s) {
+    const b = BREEDS[s.id];
+    g.font = `400 ${13 * u}px ${F.mono}`;
+    const idW = g.measureText(shortId(b.peer)).width;
+    text(g, shortId(b.peer), x + w - pad, y + 32 * u, { size: 13 * u, family: "mono", color: C.muted, align: "right" });
+    text(g, b.name, x + w - pad - idW - 8 * u, y + 32 * u, { size: 15 * u, weight: 700, align: "right" });
+  }
+  const x0 = x + pad, x1 = x + w - pad, y0 = y + 48 * u, y1 = y + 100 * u;
+  const yOf = (v) => lerp(y1, y0, (clamp(v, -95, -35) + 95) / 60);
+  const xOf = (st) => x1 - ((t - st) / 6) * (x1 - x0);
+  g.save();
+  g.setLineDash([5 * u, 5 * u]);
+  g.beginPath(); g.moveTo(x0, yOf(BOOP_RSSI)); g.lineTo(x1, yOf(BOOP_RSSI));
+  g.lineWidth = 1.5 * u; g.strokeStyle = C.muted; g.stroke();
+  g.restore();
+  text(g, "碰鼻门槛 −55", x0, yOf(BOOP_RSSI) - 6 * u, { size: 11 * u, family: "mono", color: C.muted });
+  if (s) {
+    const hist = [];
+    for (let i = Math.floor(t / SAMPLE_DT); i >= 0; i--) {
+      const q = SAMPLES[i];
+      if (!q || q.id !== s.id || q.t < t - 6) break;
+      hist.unshift(q);
+    }
+    g.fillStyle = "#c2c4bb";
+    for (const q of hist) { g.beginPath(); g.arc(xOf(q.t), yOf(q.raw), 2.2 * u, 0, Math.PI * 2); g.fill(); }
+    if (hist.length > 1) {
+      g.beginPath();
+      hist.forEach((q, i) => (i ? g.lineTo : g.moveTo).call(g, xOf(q.t), Math.min(yOf(q.smooth), yOf(BOOP_RSSI))));
+      for (let i = hist.length - 1; i >= 0; i--) g.lineTo(xOf(hist[i].t), yOf(BOOP_RSSI));
+      g.closePath();
+      g.fillStyle = "rgba(214, 234, 71, .65)";
+      g.fill();
+      g.beginPath();
+      hist.forEach((q, i) => (i ? g.lineTo : g.moveTo).call(g, xOf(q.t), yOf(q.smooth)));
+      g.lineWidth = 2.5 * u; g.strokeStyle = C.ink; g.lineJoin = "round"; g.stroke();
+    }
+    const v = Math.round(s.smooth);
+    text(g, String(v).replace("-", "−"), x0, y + 136 * u, { size: 30 * u, family: "mono", weight: 600 });
+    g.font = `600 ${30 * u}px ${F.mono}`;
+    const vw = g.measureText(String(v)).width;
+    text(g, "dBm", x0 + vw + 6 * u, y + 136 * u, { size: 13 * u, family: "mono", color: C.muted });
+    let label = nearWord(s.smooth), on = s.close;
+    if (s.active && !s.counted) { label = `贴近 ${Math.min(2, t - s.since).toFixed(1)} / 2 秒`; on = true; }
+    if (s.counted) { label = "记一次碰鼻"; on = true; }
+    g.font = `600 ${14 * u}px ${F.sans}`;
+    const lw = g.measureText(label).width + 26 * u;
+    pill(g, label, x1 - lw / 2, y + 126 * u, { size: 14 * u, bg: on ? C.ball : C.paper, fg: C.ink, padX: 13 * u, h: 30 * u });
+  } else {
+    text(g, "附近没有别的牌子", x0, y + 132 * u, { size: 15 * u, color: C.muted });
+  }
+  g.restore();
+}
+
+function drawLedger(g, t, L) {
+  const a = fadeWindow(t, 3.4, 23.0, 0.35);
+  if (a <= 0) return;
+  const { x, y, w, u, rows } = L.ledger;
+  const rowH = 40 * u, pad = 18 * u, head = 48 * u;
+  const h = head + rows * rowH + 44 * u;
+  g.save();
+  g.globalAlpha = a;
+  card(g, x, y, w, h, 18 * u);
+  text(g, "布丁的记录", x + pad, y + 32 * u, { size: 15 * u, weight: 700 });
+  text(g, "今天", x + w - pad, y + 32 * u, { size: 14 * u, color: C.muted, align: "right" });
+  const done = LEDGER.filter((r) => r.t <= t);
+  const newest = done[done.length - 1];
+  const shift = newest ? easeOut(span(t, newest.t, newest.t + 0.35)) : 1;
+  g.save();
+  g.beginPath();
+  g.rect(x, y + head - 4 * u, w, rows * rowH + 4 * u);
+  g.clip();
+  if (!done.length) text(g, "还没遇到别的牌子", x + pad, y + head + 25 * u, { size: 14 * u, color: C.muted });
+  done.slice().reverse().slice(0, rows + 1).forEach((r, i) => {
+    const isNew = r === newest;
+    const ry = y + head + (i - (isNew ? 0 : 1 - shift)) * rowH;
+    g.save();
+    if (isNew) g.globalAlpha *= shift;
+    if (i) { g.fillStyle = C.line; g.fillRect(x + pad, ry, w - pad * 2, 1); }
+    const b = BREEDS[r.id];
+    text(g, r.time, x + pad, ry + 26 * u, { size: 14 * u, family: "mono", color: C.muted });
+    drawNose(g, b.peer, x + pad + 72 * u, ry + 20 * u, 26 * u, r.boops > 0);
+    text(g, b.name, x + pad + 92 * u, ry + 26 * u, { size: 15 * u, weight: 600 });
+    const label = r.boops ? `碰鼻 ×${r.boops}` : "擦肩";
+    g.font = `700 ${13 * u}px ${F.sans}`;
+    const lw = g.measureText(label).width + 20 * u;
+    pill(g, label, x + w - pad - lw / 2, ry + 20 * u, { size: 13 * u, weight: 700, bg: r.boops ? C.ball : C.paper, fg: r.boops ? C.ink : C.muted, padX: 10 * u, h: 26 * u });
+    g.restore();
+  });
+  g.restore();
+  const passes = done.length, boops = done.reduce((n, r) => n + r.boops, 0);
+  g.fillStyle = C.line;
+  g.fillRect(x + pad, y + head + rows * rowH + 6 * u, w - pad * 2, 1);
+  text(g, `擦肩 ${passes} 回 · 碰鼻 ${boops} 次`, x + pad, y + head + rows * rowH + 32 * u, { size: 14 * u, color: C.muted });
+  g.restore();
+}
+
+function ledgerSlot(L) {
+  const { x, y, u } = L.ledger;
+  return { x: x + 18 * u + 72 * u, y: y + 48 * u + 20 * u, size: 26 * u };
+}
+
+function drawClock(g, t, L) {
+  const a = fadeWindow(t, 0.2, 23.0, 0.35);
+  if (a <= 0) return;
+  g.save();
+  g.globalAlpha = a;
+  text(g, clockAt(t), L.clock.x, L.clock.y, { size: L.clock.size, family: "display", align: "center" });
+  const ff = fadeWindow(t, 19.1, 22.8, 0.2);
+  if (ff > 0) {
+    g.globalAlpha = a * ff;
+    const cx = L.clock.x + L.clock.size * 2.1, cy = L.clock.y - L.clock.size * 0.34;
+    pill(g, D.fast + "    ", cx, cy, { size: 16, family: "display", bg: C.ink, fg: C.paper, padX: 14, h: 32 });
+    g.fillStyle = C.paper;
+    for (let i = 0; i < 2; i++) {
+      const tx = cx + 18 + i * 9;
+      g.beginPath(); g.moveTo(tx, cy - 6); g.lineTo(tx + 9, cy); g.lineTo(tx, cy + 6); g.closePath(); g.fill();
+    }
+  }
+  g.restore();
+}
+
+function drawStampFlight(g, t, L, points) {
+  if (t < STAMP_FLY[0] || t > STAMP_FLY[1]) return;
+  const k = easeInOut(span(t, STAMP_FLY[0], STAMP_FLY[1]));
+  const from = points && points.doudou
+    ? { x: (points.pudding.nose.x + points.doudou.nose.x) / 2, y: (points.pudding.nose.y + points.doudou.nose.y) / 2 - 96 }
+    : { x: L.heroX + 100, y: L.near - 180 };
+  const to = ledgerSlot(L);
+  const cx = lerp(from.x, to.x, 0.5), cy = Math.min(from.y, to.y) - 120;
+  const x = (1 - k) ** 2 * from.x + 2 * (1 - k) * k * cx + k * k * to.x;
+  const y = (1 - k) ** 2 * from.y + 2 * (1 - k) * k * cy + k * k * to.y;
+  g.save();
+  g.translate(x, y);
+  g.rotate(lerp(-0.2, 0, k));
+  drawNose(g, BREEDS.doudou.peer, 0, 0, lerp(78, to.size, k), true);
+  g.restore();
+}
+
+// ---------- film: home ----------
+
+function drawStrap(g, cx, cy, s, alpha) {
+  if (alpha <= 0) return;
+  g.save();
+  g.globalAlpha *= alpha;
+  g.translate(cx, cy);
+  g.scale(s, s);
+  g.beginPath(); g.roundRect(-1100, -46, 2200, 92, 20); g.fillStyle = "#2c2827"; g.fill();
+  g.setLineDash([14, 10]);
+  g.lineWidth = 2.5;
+  g.strokeStyle = "#57514e";
+  g.beginPath(); g.moveTo(-1100, -34); g.lineTo(1100, -34); g.moveTo(-1100, 34); g.lineTo(1100, 34); g.stroke();
+  g.setLineDash([]);
+  g.beginPath(); g.roundRect(-120, -80, 240, 160, 36); g.fillStyle = "#3b3634"; g.fill();
+  g.restore();
+}
+
+function drawBigTag(g, cx, cy, s, press) {
+  const k = s * (1 - 0.035 * press);
+  g.save();
+  g.translate(cx, cy);
+  g.scale(k, k);
+  g.save();
+  g.shadowColor = "rgba(20, 16, 15, .30)";
+  g.shadowBlur = 30 * (1 - press * 0.6);
+  g.shadowOffsetY = 12 * (1 - press * 0.6);
+  g.beginPath(); g.roundRect(-88, -88, 176, 176, 34); g.fillStyle = "#fbfbf6"; g.fill();
+  g.restore();
+  g.beginPath(); g.roundRect(-88, -88, 176, 176, 34); g.lineWidth = 4; g.strokeStyle = C.ink; g.stroke();
+  g.beginPath(); g.roundRect(-64, -64, 128, 128, 24); g.fillStyle = press ? "#e8eae1" : "#f1f2ec"; g.fill(); g.lineWidth = 2; g.strokeStyle = C.line; g.stroke();
+  g.save(); g.translate(-30, -32); g.scale(0.6, 0.6); g.fillStyle = "#dcded4"; g.fill(NOSE); g.restore();
+  g.beginPath(); g.roundRect(-16, 80, 32, 7, 3.5); g.fillStyle = "#c9cbc2"; g.fill();
+  g.restore();
+}
+
+function drawFinger(g, x, y, s) {
+  g.save();
+  g.translate(x, y);
+  g.scale(s, s);
+  g.rotate(0.5);
+  g.beginPath(); g.roundRect(-34, -330, 68, 338, 34); g.fillStyle = "#efc6a6"; g.fill(); g.lineWidth = 4; g.strokeStyle = C.ink; g.stroke();
+  g.beginPath(); g.roundRect(-20, -54, 40, 46, 17); g.fillStyle = "#f7dfcc"; g.fill(); g.lineWidth = 2.5; g.stroke();
+  g.restore();
+}
+
+function drawWifi(g, x, y, s, k) {
+  if (k <= 0) return;
+  g.save();
+  g.translate(x, y);
+  g.scale(s, s);
+  g.lineCap = "round";
+  g.lineWidth = 9;
+  g.strokeStyle = C.ink;
+  for (let i = 0; i < 3; i++) {
+    const a = clamp(k * 3 - i);
+    if (!a) continue;
+    g.globalAlpha = a;
+    g.beginPath(); g.arc(0, 0, 28 + i * 24, -Math.PI * 0.78, -Math.PI * 0.22); g.stroke();
+  }
+  g.globalAlpha = clamp(k * 3);
+  g.beginPath(); g.arc(0, 0, 7, 0, Math.PI * 2); g.fillStyle = C.ink; g.fill();
+  g.restore();
+}
+
+function statusBar(g) {
+  text(g, "08:24", 26, 30, { size: 13, weight: 700 });
+  g.fillStyle = C.ink;
+  for (let i = 0; i < 4; i++) g.fillRect(206 + i * 5, 26 - i * 3, 3.5, 4 + i * 3);
+  g.beginPath(); g.roundRect(232, 18, 24, 12, 3.5); g.lineWidth = 1.5; g.strokeStyle = C.ink; g.stroke();
+  g.fillRect(234.5, 20.5, 15, 7);
+}
+
+function wifiGlyph(g, x, y, s = 1) {
+  g.save();
+  g.translate(x, y);
+  g.scale(s, s);
+  g.lineCap = "round";
+  g.lineWidth = 2.2;
+  g.strokeStyle = C.ink;
+  for (let i = 0; i < 2; i++) { g.beginPath(); g.arc(0, 4, 5 + i * 5, -Math.PI * 0.78, -Math.PI * 0.22); g.stroke(); }
+  g.beginPath(); g.arc(0, 4, 1.8, 0, Math.PI * 2); g.fillStyle = C.ink; g.fill();
+  g.restore();
+}
+
+function drawWifiList(g, t) {
+  g.fillStyle = "#f2f2ee";
+  g.fillRect(0, 0, 276, 576);
+  statusBar(g);
+  text(g, "‹ 设置", 16, 64, { size: 13, color: C.muted });
+  text(g, "无线局域网", 16, 104, { size: 25, weight: 700 });
+  g.beginPath(); g.roundRect(12, 122, 252, 46, 12); g.fillStyle = C.card; g.fill();
+  text(g, "无线局域网", 26, 151, { size: 14 });
+  g.beginPath(); g.roundRect(210, 132, 42, 26, 13); g.fillStyle = C.ink; g.fill();
+  g.beginPath(); g.arc(239, 145, 10, 0, Math.PI * 2); g.fillStyle = C.card; g.fill();
+  text(g, "网络", 26, 194, { size: 12, color: C.muted });
+  g.save();
+  g.beginPath(); g.roundRect(12, 204, 252, 138, 12); g.fillStyle = C.card; g.fill(); g.clip();
+  const tapAge = t - 28.35;
+  if (tapAge > 0 && tapAge < 0.5) {
+    g.beginPath(); g.arc(120, 227, 12 + tapAge * 520, 0, Math.PI * 2);
+    g.fillStyle = `rgba(34, 30, 29, ${0.14 * (1 - tapAge / 0.5)})`;
+    g.fill();
+  }
+  const connected = t >= 28.55;
+  [["Pengbi-5BE1", false], ["ChinaNet-8F2A", true], ["家里的 Wi-Fi", true]].forEach(([name, locked], i) => {
+    const ry = 204 + i * 46;
+    if (i) { g.fillStyle = C.line; g.fillRect(26, ry, 238, 1); }
+    const mine = i === 0;
+    if (mine && connected) {
+      g.beginPath(); g.moveTo(24, ry + 23); g.lineTo(29, ry + 28); g.lineTo(37, ry + 18);
+      g.lineWidth = 2.6; g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = C.ink; g.stroke();
+    }
+    text(g, name, mine && connected ? 44 : 26, ry + 29, { size: 14, weight: mine ? 700 : 400 });
+    if (locked) {
+      g.beginPath(); g.roundRect(218, ry + 21, 10, 9, 2); g.fillStyle = C.muted; g.fill();
+      g.beginPath(); g.arc(223, ry + 21, 3.5, Math.PI, 0); g.lineWidth = 1.6; g.strokeStyle = C.muted; g.stroke();
+    }
+    wifiGlyph(g, 246, ry + 22);
+  });
+  g.restore();
+}
+
+const VIEW_ROWS = [
+  { time: "08:16", id: "strC", what: "擦肩 · 不到 1 分钟 · 远远路过" },
+  { time: "08:09", id: "corgi", what: "擦肩 · 3 分钟 · 就在身边" },
+  { time: "08:03", id: "strB", what: "擦肩 · 2 分钟 · 几米开外" },
+  { time: "07:55", id: "kele", what: "碰鼻 2 次 · 贴近 9 秒", boop: true },
+];
+const TODAY_DOGS = ["strC", "corgi", "strB", "kele", "doudou", "strA"];
+const BOOPED = new Set(["kele", "doudou"]);
+
+function drawViewer(g, t) {
+  g.fillStyle = C.paper;
+  g.fillRect(0, 0, 276, 576);
+  statusBar(g);
+  text(g, "碰鼻", 16, 64, { size: 16, weight: 800 });
+  text(g, "布丁 的项圈 · 5BE1", 260, 58, { size: 10.5, color: C.muted, align: "right" });
+  text(g, "电量 79%", 260, 72, { size: 10.5, color: C.muted, align: "right" });
+  g.beginPath(); g.roundRect(12, 84, 84, 30, 15); g.fillStyle = C.ink; g.fill();
+  text(g, "遛弯记录", 54, 104, { size: 12.5, weight: 700, color: C.paper, align: "center" });
+  text(g, "老朋友", 138, 104, { size: 12.5, weight: 600, color: C.muted, align: "center" });
+  text(g, "设置", 222, 104, { size: 12.5, weight: 600, color: C.muted, align: "center" });
+  [["今天", true], ["昨天", false], [dayLabel(3), false]].forEach(([s, on], i) => {
+    const x = 12 + i * 56;
+    g.beginPath(); g.roundRect(x, 124, 50, 24, 12); g.fillStyle = C.card; g.fill();
+    g.lineWidth = on ? 2 : 1; g.strokeStyle = on ? C.ink : C.line; g.stroke();
+    text(g, s, x + 25, 140, { size: 11, weight: on ? 700 : 400, align: "center" });
+  });
+  text(g, "布丁今天遇见了 6 只狗", 16, 184, { size: 20, weight: 800 });
+  text(g, "碰了 3 次鼻子，一共擦肩 6 回", 16, 206, { size: 12, color: C.muted });
+  TODAY_DOGS.forEach((id, i) => {
+    const t0 = VIEWER_IN[1] + 0.05 + i * 0.07;
+    const k = reduceMotion.matches ? 1 : easeBack(span(t, t0, t0 + 0.3));
+    if (k <= 0) return;
+    const cx = 36 + i * 31, cy = 238;
+    g.save();
+    g.translate(cx, cy);
+    g.scale(k, k);
+    g.beginPath(); g.arc(0, 0, 22.5, 0, Math.PI * 2); g.fillStyle = C.paper; g.fill();
+    drawNose(g, BREEDS[id].peer, 0, 0, 40, BOOPED.has(id));
+    g.restore();
+  });
+  g.beginPath(); g.roundRect(12, 272, 252, 184, 14); g.fillStyle = C.card; g.fill();
+  VIEW_ROWS.forEach((r, i) => {
+    const ry = 272 + i * 46;
+    if (i) { g.fillStyle = C.line; g.fillRect(12, ry, 252, 1); }
+    text(g, r.time, 24, ry + 27, { size: 10.5, family: "mono", weight: 600, color: C.muted });
+    drawNose(g, BREEDS[r.id].peer, 76, ry + 23, 28, !!r.boop);
+    text(g, BREEDS[r.id].name, 98, ry + 19, { size: 12.5, weight: 700 });
+    g.font = `400 12.5px ${F.sans}`;
+    const nw = g.measureText(BREEDS[r.id].name).width;
+    text(g, shortId(BREEDS[r.id].peer), 98 + nw + 5, ry + 19, { size: 9.5, family: "mono", color: C.muted });
+    text(g, r.what, 98, ry + 36, { size: 10, color: r.boop ? C.ink : C.muted, weight: r.boop ? 600 : 400 });
+  });
+  g.save();
+  g.beginPath(); g.roundRect(12, 500, 252, 42, 13); g.fillStyle = C.ink; g.fill(); g.clip();
+  const tapAge = t - 30.3;
+  if (tapAge > 0 && tapAge < 0.5) {
+    g.beginPath(); g.arc(138, 521, 10 + tapAge * 400, 0, Math.PI * 2);
+    g.fillStyle = `rgba(241, 242, 236, ${0.25 * (1 - tapAge / 0.5)})`;
+    g.fill();
+  }
+  text(g, "生成今天的社交卡片", 138, 526, { size: 12.5, weight: 700, color: C.paper, align: "center" });
+  g.restore();
+}
+
+function drawPhone(g, x, y, s, t, alpha) {
+  if (alpha <= 0) return;
+  g.save();
+  g.globalAlpha *= alpha;
+  g.translate(x, y);
+  g.scale(s, s);
+  g.save();
+  g.shadowColor = "rgba(20, 16, 15, .28)";
+  g.shadowBlur = 44;
+  g.shadowOffsetY = 20;
+  g.beginPath(); g.roundRect(-150, -300, 300, 600, 46); g.fillStyle = C.ink; g.fill();
+  g.restore();
+  g.save();
+  g.beginPath(); g.roundRect(-138, -288, 276, 576, 36); g.clip();
+  g.translate(-138, -288);
+  const k = easeInOut(span(t, VIEWER_IN[0], VIEWER_IN[1]));
+  if (k < 1) { g.save(); g.translate(-276 * k, 0); drawWifiList(g, t); g.restore(); }
+  if (k > 0) { g.save(); g.translate(276 * (1 - k), 0); drawViewer(g, t); g.restore(); }
+  g.restore();
+  g.beginPath(); g.roundRect(-38, -280, 76, 22, 11); g.fillStyle = C.ink; g.fill();
+  g.restore();
+}
+
+function drawShareCard(g, cx, cy, s, alpha) {
+  if (alpha <= 0) return;
+  g.save();
+  g.globalAlpha *= alpha;
+  g.translate(cx, cy);
+  g.scale(s, s);
+  g.translate(-180, -225);
+  g.save();
+  g.shadowColor = "rgba(20, 16, 15, .24)";
+  g.shadowBlur = 40;
+  g.shadowOffsetY = 18;
+  g.beginPath(); g.roundRect(0, 0, 360, 450, 22); g.fillStyle = C.paper; g.fill();
+  g.restore();
+  text(g, D.brand, 30, 54, { size: 26, family: "display" });
+  text(g, `今天 · ${dayLabel(0)}`, 30, 82, { size: 14, color: C.muted });
+  text(g, D.card1, 30, 138, { size: 36, family: "display" });
+  text(g, D.card2, 30, 182, { size: 36, family: "display" });
+  TODAY_DOGS.forEach((id, i) => drawNose(g, BREEDS[id].peer, 74 + (i % 3) * 104, 254 + Math.floor(i / 3) * 100, 88, BOOPED.has(id)));
+  text(g, "黄底的是碰过鼻子的。每只狗的鼻纹由项圈编号生成。", 30, 418, { size: 11, color: C.muted });
+  text(g, "碰鼻", 30, 435, { size: 11, color: C.muted });
+  g.restore();
+}
+
+function drawTitle(g, L, k) {
+  if (k <= 0) return;
+  const T = L.title, left = T.align === "left";
+  g.save();
+  g.globalAlpha *= k;
+  g.translate(0, (1 - easeOut(k)) * 18);
+  g.font = `400 ${T.size}px ${F.display}`;
+  const wordW = g.measureText(D.brand).width, logo = T.size * 0.8, gap = T.size * 0.16;
+  const x0 = left ? T.x : T.x - (logo + gap + wordW) / 2;
+  drawNose(g, BREEDS.pudding.peer, x0 + logo / 2, T.y - T.size * 0.36, logo, true);
+  text(g, D.brand, x0 + logo + gap, T.y, { size: T.size, family: "display" });
+  const sub = T.size * 0.25, ax = left ? T.x : T.x, align = left ? "left" : "center";
+  text(g, D.tagline, ax, T.y + sub * 2.4, { size: sub, weight: 600, color: C.text, align });
+  text(g, D.credit, ax, T.y + sub * 4.0, { size: sub * 0.66, color: C.muted, align });
+  g.restore();
+}
+
+function zoomState(t, L) {
+  const e = easeInOut(span(t, ZOOM[0], ZOOM[1]));
+  const tag = drawDogTagPoint(t, L);
+  return { e, z: lerp(1, ZOOM_MAX, e), tx: tag.x, ty: tag.y, cx: lerp(tag.x, L.tag.x, e), cy: lerp(tag.y, L.tag.y, e) };
+}
+
+function drawDogTagPoint(t, L) {
+  const o = puddingDrawOpts(t, L), tag = geom(BREEDS.pudding).tag;
+  return { x: o.x + tag.x * o.k, y: o.y - o.bob + tag.y * o.k };
+}
+
+function drawHome(g, t, L, zoom) {
+  const intro = t < ZOOM[1];
+  let gx = L.tag.x, gy = L.tag.y, gs = 1;
+  if (intro) { gx = zoom.cx; gy = zoom.cy; gs = zoom.z / ZOOM_MAX; }
+  const aside = easeInOut(span(t, 27.3, 27.9));
+  gx = lerp(gx, L.tagAside.x, aside);
+  gy = lerp(gy, L.tagAside.y, aside);
+  gs = lerp(gs, L.tagAside.s, aside);
+  const exit = easeInOut(span(t, 30.6, 31.2));
+
+  if (exit < 1) {
+    g.save();
+    g.globalAlpha = 1 - exit;
+    drawStrap(g, gx, gy, gs, easeInOut(span(t, 23.75, 24.3)));
+    const ring = fadeWindow(t, 24.95, 26.9, 0.15);
+    if (ring > 0) {
+      const p = span(t, 25.0, 26.5);
+      g.save();
+      g.globalAlpha *= ring;
+      g.lineCap = "round";
+      g.lineWidth = 8 * gs;
+      g.beginPath(); g.arc(gx, gy, 128 * gs, 0, Math.PI * 2); g.strokeStyle = "rgba(34, 30, 29, .12)"; g.stroke();
+      g.beginPath(); g.arc(gx, gy, 128 * gs, -Math.PI / 2, -Math.PI / 2 + p * Math.PI * 2); g.strokeStyle = C.ink; g.stroke();
+      g.restore();
+      g.save();
+      g.globalAlpha *= fadeWindow(t, 25.05, 26.5, 0.2);
+      pill(g, "长按 1.5 秒", gx, gy - 168 * gs, { size: 18, weight: 700, bg: C.card, stroke: C.ink });
+      g.restore();
+    }
+    const press = t >= 25.0 && t < 26.55 ? clamp((t - 25.0) / 0.08) * (1 - clamp((t - 26.45) / 0.1)) : 0;
+    drawBigTag(g, gx, gy, gs, press);
+    drawWifi(g, gx, gy - 150 * gs, gs, span(t, 26.55, 27.0) * (1 - span(t, 30.4, 30.6)));
+    if (t > 26.8) {
+      g.save();
+      const k = reduceMotion.matches ? 1 : easeBack(span(t, 26.8, 27.1));
+      g.translate(gx, gy - 246 * gs);
+      g.scale(k * Math.max(gs, 0.75), k * Math.max(gs, 0.75));
+      pill(g, "Wi-Fi  Pengbi-5BE1", 0, 0, { size: 20, family: "mono", weight: 700, bg: C.card, stroke: C.ink });
+      g.restore();
+    }
+    if (t > 24.45 && t < 27.0) {
+      const inK = easeOut(span(t, 24.5, 25.0)), outK = easeIn(span(t, 26.5, 26.95));
+      const tipX = gx + 18 * gs, tipY = gy - 16 * gs;
+      const fx = lerp(lerp(L.W + 160, tipX, inK), L.W + 200, outK);
+      const fy = lerp(lerp(-200, tipY, inK), -240, outK);
+      drawFinger(g, fx, fy, Math.max(gs, 0.75));
+    }
+    g.restore();
+  }
+
+  const phoneIn = easeOut(span(t, 27.3, 27.9));
+  if (phoneIn > 0) {
+    const P = L.phone;
+    const px = lerp(P.fromX, P.x, phoneIn) + P.exitX * exit, py = lerp(P.fromY, P.y, phoneIn) + P.exitY * exit;
+    drawPhone(g, px, py, P.s, t, 1 - exit);
+    if (t > 30.55) {
+      const grow = easeOut(span(t, 30.6, 31.4)), settle = easeInOut(span(t, 31.6, 32.2));
+      const sx = P.x, sy = P.y + 232 * P.s;
+      const cx = lerp(lerp(sx, L.card.x, grow), L.cardEnd.x, settle);
+      const cy = lerp(lerp(sy, L.card.y, grow), L.cardEnd.y, settle);
+      const cs = lerp(lerp(0.22 * P.s, L.card.s, grow), L.cardEnd.s, settle);
+      drawShareCard(g, cx, cy, cs, clamp(grow * 2.5));
+    }
+  }
+  drawTitle(g, L, easeOut(span(t, 31.9, 32.5)));
+}
+
+// ---------- film: frame ----------
+
+function drawCaption(g, t, L) {
+  const c = CAPTIONS.find(([a, b]) => t >= a && t < b);
+  if (!c) return;
+  const a = fadeWindow(t, c[0], c[1], 0.2);
+  g.save();
+  g.globalAlpha = a;
+  pill(g, c[2], L.W / 2, L.caption.y, { size: L.caption.size, weight: 600, bg: "rgba(255, 255, 255, .94)", fg: C.ink, padX: L.caption.size, h: L.caption.size * 2.1 });
+  g.restore();
+}
+
+function renderFilm(g, t, L, scale, captions) {
+  g.setTransform(scale, 0, 0, scale, 0, 0);
+  g.fillStyle = C.stage;
+  g.fillRect(0, 0, L.W, L.H);
+  const zoom = zoomState(t, L);
+  if (t < ZOOM[1] + 0.1) {
+    g.save();
+    if (zoom.z > 1.0001) { g.translate(zoom.cx, zoom.cy); g.scale(zoom.z, zoom.z); g.translate(-zoom.tx, -zoom.ty); }
+    const points = drawStreet(g, t, L);
+    g.restore();
+    const hide = easeInOut(span(t, 23.35, 24.0));
+    if (hide > 0) { g.fillStyle = `rgba(231, 234, 225, ${hide})`; g.fillRect(0, 0, L.W, L.H); }
+    drawSignal(g, t, L);
+    drawLedger(g, t, L);
+    drawClock(g, t, L);
+    drawStampFlight(g, t, L, points);
+  }
+  if (t >= 23.6) drawHome(g, t, L, zoom);
+  if (captions) drawCaption(g, t, L);
+  const fade = Math.max(1 - span(t, 0, 0.35), span(t, FILM_LEN - 0.4, FILM_LEN));
+  if (fade > 0) { g.fillStyle = `rgba(231, 234, 225, ${fade})`; g.fillRect(0, 0, L.W, L.H); }
+}
+
+// ---------- film: player ----------
+
+const player = {
+  stage: $("#stage"), canvas: $("#film"), t: reduceMotion.matches ? 1.2 : 0, playing: false, last: 0, raf: 0,
+  layout: "wide", chosen: null, scale: 1, pausedByUser: false, inView: false, recording: null, scrub: null,
+};
+player.g = player.canvas.getContext("2d");
+const chaptersEl = $("#chapters");
+const timeEl = $("#time");
+const captionEl = $("#caption");
+let lastTimeText = "", lastCaption = null;
+
+CHAPTERS.forEach((c, i) => {
+  const end = i + 1 < CHAPTERS.length ? CHAPTERS[i + 1].t : FILM_LEN;
+  const el = document.createElement("div");
+  el.className = "chapter";
+  el.style.setProperty("--len", String(end - c.t));
+  el.innerHTML = `<span class="bar"><i></i></span><span class="label">${c.label}</span>`;
+  c.el = el;
+  c.end = end;
+  chaptersEl.append(el);
+});
+
+const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+function layoutFor() {
+  if (player.chosen) return player.chosen;
+  return player.stage.parentElement.clientWidth < 620 ? "tall" : "wide";
+}
+
+function resize() {
+  const name = player.recording ? player.layout : layoutFor();
+  if (name !== player.layout || player.stage.dataset.layout !== name) {
+    player.layout = name;
+    player.stage.dataset.layout = name;
+    for (const b of document.querySelectorAll(".seg .ctrl")) b.setAttribute("aria-pressed", String(b.dataset.layout === name));
+  }
+  if (player.recording) return;
+  const L = LAYOUTS[name];
+  const cssW = player.stage.clientWidth || L.W;
+  const px = Math.round(Math.min(L.exportW, cssW * Math.min(2, window.devicePixelRatio || 1)));
+  if (player.canvas.width !== px) {
+    player.canvas.width = px;
+    player.canvas.height = Math.round((px * L.H) / L.W);
+  }
+  player.scale = player.canvas.width / L.W;
+  draw();
+}
+
+function draw() {
+  const L = LAYOUTS[player.layout];
+  const captionsOnCanvas = !!player.recording || player.stage.clientWidth >= 700;
+  renderFilm(player.g, player.t, L, player.scale, captionsOnCanvas);
+  for (const c of CHAPTERS) {
+    const p = span(player.t, c.t, c.end);
+    c.el.style.setProperty("--p", p.toFixed(4));
+    c.el.classList.toggle("on", player.t >= c.t && player.t < c.end);
+  }
+  const tt = `${fmt(player.t)} / ${fmt(FILM_LEN)}`;
+  if (tt !== lastTimeText) {
+    lastTimeText = tt;
+    timeEl.textContent = tt;
+    chaptersEl.setAttribute("aria-valuenow", String(Math.floor(player.t)));
+    chaptersEl.setAttribute("aria-valuetext", tt);
+  }
+  const cap = captionsOnCanvas ? null : (CAPTIONS.find(([a, b]) => player.t >= a && player.t < b) || [0, 0, ""])[2];
+  if (cap !== lastCaption) {
+    lastCaption = cap;
+    captionEl.hidden = cap === null;
+    captionEl.textContent = cap || "";
+  }
+}
+
+function fire(prev, now) {
+  for (const e of EVENTS) if (e.t > prev && e.t <= now) sound.play(e.s);
+}
+
+function frame(ts) {
+  player.raf = 0;
+  if (!player.playing) return;
+  const dt = Math.min(0.1, (ts - player.last) / 1000);
+  player.last = ts;
+  const prev = player.t;
+  player.t += dt;
+  if (player.t >= FILM_LEN) {
+    if (player.recording) {
+      player.t = FILM_LEN - 0.001;
+      draw();
+      stopRecording();
+      return;
+    }
+    fire(prev, FILM_LEN);
+    player.t -= FILM_LEN;
+    fire(-1, player.t);
+  } else fire(prev, player.t);
+  draw();
+  player.raf = requestAnimationFrame(frame);
+}
+
+function play() {
+  if (player.playing) return;
+  player.playing = true;
+  player.stage.dataset.playing = "true";
+  $("#playIcon").setAttribute("d", "M7 5h3.6v14H7zM13.4 5H17v14h-3.6z");
+  $("#play").setAttribute("aria-label", "暂停");
+  player.last = performance.now();
+  player.raf = requestAnimationFrame(frame);
+}
+
+function pause() {
+  if (!player.playing) return;
+  player.playing = false;
+  player.stage.dataset.playing = "false";
+  $("#playIcon").setAttribute("d", "M8 5.2v13.6L18.8 12z");
+  $("#play").setAttribute("aria-label", "播放");
+  cancelAnimationFrame(player.raf);
+  player.raf = 0;
+}
+
+function toggle() {
+  if (player.recording) return;
+  if (player.playing) { pause(); player.pausedByUser = true; }
+  else { player.pausedByUser = false; play(); }
+}
+
+function seek(t) {
+  player.t = clamp(t, 0, FILM_LEN - 0.001);
+  draw();
+}
+
+function timeFromX(clientX) {
+  for (const c of CHAPTERS) {
+    const r = c.el.getBoundingClientRect();
+    if (clientX <= r.right + 2 || c === CHAPTERS[CHAPTERS.length - 1]) return c.t + clamp((clientX - r.left) / r.width) * (c.end - c.t);
+  }
+  return 0;
+}
+
+chaptersEl.addEventListener("pointerdown", (e) => {
+  if (player.recording) return;
+  chaptersEl.setPointerCapture(e.pointerId);
+  player.scrub = { wasPlaying: player.playing };
+  pause();
+  seek(timeFromX(e.clientX));
+});
+chaptersEl.addEventListener("pointermove", (e) => { if (player.scrub) seek(timeFromX(e.clientX)); });
+const endScrub = () => {
+  if (!player.scrub) return;
+  const resume = player.scrub.wasPlaying;
+  player.scrub = null;
+  if (resume) play();
+};
+chaptersEl.addEventListener("pointerup", endScrub);
+chaptersEl.addEventListener("pointercancel", endScrub);
+chaptersEl.addEventListener("keydown", (e) => {
+  if (player.recording) return;
+  const step = { ArrowLeft: -2, ArrowRight: 2, ArrowDown: -2, ArrowUp: 2 }[e.key];
+  if (step) { seek(player.t + step); e.preventDefault(); }
+  if (e.key === "Home") { seek(0); e.preventDefault(); }
+  if (e.key === "End") { seek(FILM_LEN - 0.01); e.preventDefault(); }
+  if (e.key === " " || e.key === "Enter") { toggle(); e.preventDefault(); }
+});
+
+player.canvas.addEventListener("click", toggle);
+$("#bigPlay").addEventListener("click", toggle);
+$("#play").addEventListener("click", toggle);
+for (const b of document.querySelectorAll(".seg .ctrl")) {
+  b.addEventListener("click", () => {
+    if (player.recording) return;
+    player.chosen = b.dataset.layout;
+    resize();
+  });
+}
+$("#sound").addEventListener("click", (e) => {
+  sound.on = !sound.on;
+  if (sound.on) sound.ensure();
+  e.currentTarget.setAttribute("aria-pressed", String(sound.on));
+});
+
+new ResizeObserver(resize).observe(player.stage.parentElement);
+
+new IntersectionObserver(([entry]) => {
+  player.inView = entry.isIntersecting;
+  if (player.recording) return;
+  if (!entry.isIntersecting) pause();
+  else if (!player.pausedByUser && !reduceMotion.matches) play();
+}, { threshold: 0.35 }).observe(player.stage);
+
+document.addEventListener("visibilitychange", () => {
+  if (player.recording) return;
+  if (document.hidden) pause();
+  else if (player.inView && !player.pausedByUser && !reduceMotion.matches) play();
+});
+
+const startAt = Number(new URLSearchParams(location.search).get("t"));
+if (startAt >= 0 && startAt < FILM_LEN && location.search.includes("t=")) { player.t = startAt; player.pausedByUser = true; }
+const startLayout = new URLSearchParams(location.search).get("layout");
+if (LAYOUTS[startLayout]) player.chosen = startLayout;
+
+// ---------- film: export ----------
+
+const recordBtn = $("#record");
+const recordable = typeof MediaRecorder !== "undefined" && !!player.canvas.captureStream;
+if (!recordable) recordBtn.hidden = true;
+
+function pickType() {
+  const types = ["video/mp4;codecs=avc1.640028", "video/mp4;codecs=avc1", "video/mp4", "video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
+  return types.find((x) => MediaRecorder.isTypeSupported(x));
+}
+
+function startRecording() {
+  if (player.recording) return;
+  const type = pickType();
+  if (!type) { recordBtn.textContent = "这个浏览器录不了"; return; }
+  pause();
+  const L = LAYOUTS[player.layout];
+  player.canvas.width = L.exportW;
+  player.canvas.height = L.exportH;
+  player.scale = L.exportW / L.W;
+  const stream = player.canvas.captureStream(30);
+  if (sound.on) {
+    const ac = sound.ensure();
+    if (ac && ac.createMediaStreamDestination) {
+      if (!sound.dest) { sound.dest = ac.createMediaStreamDestination(); sound.master.connect(sound.dest); }
+      stream.addTrack(sound.dest.stream.getAudioTracks()[0]);
+    }
+  }
+  const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 12e6 });
+  const chunks = [];
+  rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = () => {
+    const blob = new Blob(chunks, { type: type.split(";")[0] });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `碰鼻演示-${player.layout === "tall" ? "竖版" : "横版"}.${type.startsWith("video/mp4") ? "mp4" : "webm"}`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    player.recording = null;
+    recordBtn.textContent = "下载视频";
+    for (const el of document.querySelectorAll(".controls button")) el.disabled = false;
+    resize();
+  };
+  player.recording = { rec, timer: 0 };
+  for (const el of document.querySelectorAll(".controls button")) el.disabled = el !== recordBtn;
+  recordBtn.disabled = true;
+  player.t = 0;
+  draw();
+  rec.start(500);
+  player.recording.timer = setInterval(() => { recordBtn.textContent = `录制中 ${Math.floor(player.t)} / ${FILM_LEN} 秒`; }, 250);
+  play();
+}
+
+function stopRecording() {
+  const r = player.recording;
+  if (!r) return;
+  clearInterval(r.timer);
+  pause();
+  r.rec.stop();
+}
+
+recordBtn.addEventListener("click", startRecording);
+
+// ---------- misc ----------
+
+if (document.fonts && document.fonts.load) {
+  document.fonts.load(`40px "ZCOOL QingKe HuangYou"`).then(() => { draw(); }).catch(() => {});
+}
+resize();
+</script>
+</body>
+</html>
