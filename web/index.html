@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f1f2ec">
+<title>碰鼻</title>
+<style>
+  :root {
+    --paper: #f1f2ec;
+    --card: #ffffff;
+    --ink: #221e1d;
+    --muted: #6d6f68;
+    --line: #dcded5;
+    --ball: #d6ea47;
+    --warn: #b4442f;
+    --radius: 18px;
+    --sans: "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 15px/1.55 var(--sans);
+    padding: env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 32px);
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 18px; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+
+  .demo {
+    margin: 12px 0 0;
+    padding: 10px 14px;
+    border: 1px dashed var(--muted);
+    border-radius: 12px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0 6px; }
+  .brand { font-weight: 800; font-size: 17px; letter-spacing: .08em; }
+  .device { font-size: 12px; color: var(--muted); text-align: right; line-height: 1.4; }
+  .device b { color: var(--ink); font-weight: 600; }
+
+  .tabs {
+    position: sticky; top: 0; z-index: 2;
+    display: flex; gap: 6px;
+    padding: 10px 0;
+    background: var(--paper);
+  }
+  .tabs button {
+    flex: 1;
+    border: 0; border-radius: 999px;
+    padding: 9px 0;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .tabs button[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+
+  .days { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 2px; scrollbar-width: none; }
+  .days::-webkit-scrollbar { display: none; }
+  .days button {
+    flex: none;
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 14px;
+    background: var(--card);
+    font-size: 13px;
+  }
+  .days button[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); font-weight: 600; }
+
+  .hero { padding: 22px 0 8px; }
+  .hero h1 { margin: 0; font-size: 28px; line-height: 1.3; font-weight: 750; letter-spacing: -.01em; }
+  .hero p { margin: 8px 0 0; color: var(--muted); }
+  .stamps { display: flex; flex-wrap: wrap; row-gap: 8px; margin: 20px 0 6px; padding-left: 12px; }
+  .stamps svg { width: 58px; height: 58px; margin-left: -12px; border-radius: 50%; box-shadow: 0 0 0 3px var(--paper); }
+  @media (prefers-reduced-motion: no-preference) {
+    .stamps svg { animation: stamp .42s cubic-bezier(.2, .9, .3, 1.4) both; }
+    @keyframes stamp { from { transform: scale(1.25) rotate(-8deg); opacity: 0; } }
+  }
+
+  .list { margin: 14px 0 0; padding: 0; list-style: none; background: var(--card); border-radius: var(--radius); }
+  .row {
+    display: grid; grid-template-columns: 46px 44px 1fr; gap: 12px; align-items: center;
+    width: 100%; padding: 12px 16px;
+    border: 0; border-top: 1px solid var(--line);
+    background: transparent; text-align: left;
+  }
+  .list li:first-child .row { border-top: 0; }
+  .row.wide { grid-template-columns: 44px 1fr; }
+  .when { font: 600 13px/1.2 var(--mono); color: var(--muted); }
+  .row svg { width: 44px; height: 44px; }
+  .who { font-weight: 650; }
+  .who .id { font: 12px var(--mono); color: var(--muted); font-weight: 400; margin-left: 4px; }
+  .what { font-size: 13px; color: var(--muted); }
+  .what .boop { color: var(--ink); font-weight: 600; }
+
+  .empty { margin: 14px 0 0; padding: 28px 20px; background: var(--card); border-radius: var(--radius); color: var(--muted); }
+
+  .primary {
+    display: block; width: 100%; margin: 18px 0 0;
+    border: 0; border-radius: 14px; padding: 13px;
+    background: var(--ink); color: var(--paper); font-weight: 650;
+  }
+  .ghost { border: 1px solid var(--line); border-radius: 12px; padding: 9px 14px; background: var(--card); }
+  .danger { color: var(--warn); }
+
+  .group { margin: 22px 0 0; }
+  .group h2 { margin: 0 0 8px; font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: .04em; }
+  .box { padding: 16px; background: var(--card); border-radius: var(--radius); }
+  .box + .box { margin-top: 10px; }
+  .box p { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+  .field { display: flex; gap: 8px; }
+  .field input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; background: var(--paper); }
+  .stack { display: grid; gap: 8px; }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; font-size: 13px; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; font-family: var(--mono); text-align: right; }
+
+  .threshold { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .threshold strong { font: 700 22px var(--mono); min-width: 5.5ch; text-align: center; }
+  .meter { position: relative; height: 8px; margin-top: 6px; border-radius: 999px; background: var(--paper); }
+  .meter i { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: var(--ink); }
+  .meter b { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--warn); }
+  .live .row { grid-template-columns: 44px 1fr auto; }
+  .live .dbm { font: 600 13px var(--mono); }
+  .tag { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px; background: var(--ball); font-size: 12px; font-weight: 600; color: var(--ink); }
+
+  dialog { width: min(92vw, 420px); border: 0; border-radius: 22px; padding: 22px; background: var(--card); color: var(--ink); }
+  dialog::backdrop { background: rgba(34, 30, 29, .45); }
+  dialog h3 { margin: 0 0 6px; font-size: 18px; }
+  dialog p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+  dialog .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  .card-img { display: block; width: 100%; border-radius: 12px; background: var(--paper); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 24px);
+    transform: translate(-50%, 20px); opacity: 0;
+    padding: 10px 16px; border-radius: 999px;
+    background: var(--ink); color: var(--paper); font-size: 13px;
+    pointer-events: none; transition: opacity .2s, transform .2s;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="demo" id="demo" hidden>这是演示数据。连上项圈的 Wi-Fi「Pengbi-…」后打开本页，就能看到你家狗的真实记录。</div>
+
+  <header class="top">
+    <div class="brand">碰鼻</div>
+    <div class="device" id="device"></div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="页面">
+    <button role="tab" id="tab-walks" aria-controls="panel-walks" aria-selected="true" data-tab="walks">遛弯记录</button>
+    <button role="tab" id="tab-friends" aria-controls="panel-friends" aria-selected="false" data-tab="friends">老朋友</button>
+    <button role="tab" id="tab-settings" aria-controls="panel-settings" aria-selected="false" data-tab="settings">设置</button>
+  </nav>
+
+  <main>
+    <section id="panel-walks" role="tabpanel" aria-labelledby="tab-walks"></section>
+    <section id="panel-friends" role="tabpanel" aria-labelledby="tab-friends" hidden></section>
+    <section id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" hidden></section>
+  </main>
+</div>
+
+<dialog id="nameDialog">
+  <form method="dialog" id="nameForm">
+    <h3>这只狗是谁？</h3>
+    <p id="nameHint"></p>
+    <div class="field"><input id="nameInput" maxlength="16" placeholder="比如：楼下的豆豆" autocomplete="off"></div>
+    <div class="actions">
+      <button class="ghost" type="button" id="nameCancel">取消</button>
+      <button class="ghost" value="save" style="background: var(--ink); color: var(--paper); border-color: var(--ink);">保存名字</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="cardDialog">
+  <h3>今天的社交卡片</h3>
+  <p>长按图片保存，或者点下载。</p>
+  <img class="card-img" id="cardImg" alt="今天遇见的狗和碰鼻次数">
+  <div class="actions">
+    <button class="ghost" id="cardClose">关闭</button>
+    <a class="ghost" id="cardDownload" download="pengbi.png" style="text-decoration: none; background: var(--ink); color: var(--paper); border-color: var(--ink);">下载图片</a>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const MERGE_GAP_S = 300;
+
+const state = {
+  demo: false,
+  status: null,
+  records: [],
+  labels: {},
+  tab: "walks",
+  day: null,
+  liveTimer: 0,
+  live: null,
+};
+
+// ---------- device API (falls back to demo data when the page is not served by a collar) ----------
+
+async function api(path, body) {
+  if (state.demo) return demoApi(path, body);
+  const res = await fetch(path, body ? { method: "POST", body: new URLSearchParams(body) } : { cache: "no-store" });
+  if (!res.ok) throw new Error((await res.text()) || "HTTP " + res.status);
+  return res.json();
+}
+
+async function load() {
+  try {
+    state.status = await api("/api/status");
+  } catch (err) {
+    startDemo();
+  }
+  if (!state.demo) await syncClock();
+  const [records, labels] = await Promise.all([api("/api/encounters"), api("/api/labels")]);
+  state.records = records;
+  state.labels = labels;
+  render();
+}
+
+async function syncClock() {
+  const now = Math.floor(Date.now() / 1000);
+  const s = state.status;
+  if (s.timeValid && Math.abs(s.now - now) < 120) return;
+  state.status = await api("/api/time", { unix: now });
+  toast("已用手机时间给项圈对时");
+}
+
+// ---------- demo data ----------
+
+const demo = { status: null, records: [], labels: {} };
+
+function startDemo() {
+  state.demo = true;
+  const at = (daysAgo, hh, mm) => {
+    const d = new Date();
+    d.setDate(d.getDate() - daysAgo);
+    d.setHours(hh, mm, 0, 0);
+    return Math.floor(d / 1000);
+  };
+  const P = { doudou: "5be1a3f2", kele: "91c04d7e", corgi: "c7d2190b", a: "2f6b88a0", b: "0e9f5c64", c: "a4417be9", d: "6d03c2f1" };
+  const rows = [
+    [0, 7, 44, P.a, 35, 0, 0, -72], [0, 7, 48, P.doudou, 260, 1, 6, -48], [0, 7, 55, P.kele, 410, 2, 9, -44],
+    [0, 8, 3, P.b, 90, 0, 0, -71], [0, 8, 9, P.corgi, 150, 0, 0, -62], [0, 8, 16, P.c, 20, 0, 0, -86],
+    [1, 19, 12, P.doudou, 520, 3, 25, -38], [1, 19, 30, P.corgi, 300, 1, 4, -50], [1, 19, 44, P.d, 60, 0, 0, -75],
+    [3, 18, 50, P.kele, 200, 0, 0, -58], [3, 19, 5, P.doudou, 340, 2, 11, -43], [3, 19, 20, P.b, 45, 0, 0, -83],
+  ];
+  demo.records = rows.map(([da, hh, mm, peer, dur, boops, boopS, rssi]) => ({ peer, start: at(da, hh, mm), boot: 12 - da, dur, boopS, boops, rssi, t: 1 }));
+  demo.records.push({ peer: P.corgi, start: 1520, boot: 5, dur: 240, boopS: 3, boops: 1, rssi: -52, t: 0 });
+  demo.labels = { [P.doudou]: "豆豆", [P.kele]: "可乐", [P.corgi]: "楼下的柯基" };
+  demo.status = {
+    id: "3d9a5be1", fw: "0.1.0", boot: 12, uptime: 2400, timeValid: true, now: Math.floor(Date.now() / 1000),
+    batteryMv: 3880, records: demo.records.length, boopRssi: -55, apLocked: false, apSecured: false, dropped: 0,
+    dogName: "布丁", homeSsid: "",
+  };
+  state.status = demo.status;
+  $("#demo").hidden = false;
+}
+
+function demoApi(path, body) {
+  const s = demo.status;
+  switch (path) {
+    case "/api/status": return Promise.resolve(s);
+    case "/api/encounters": return Promise.resolve(demo.records.slice());
+    case "/api/labels": return Promise.resolve({ ...demo.labels });
+    case "/api/label":
+      if (body.name) demo.labels[body.peer] = body.name; else delete demo.labels[body.peer];
+      return Promise.resolve({ ...demo.labels });
+    case "/api/settings":
+      if ("dogName" in body) s.dogName = body.dogName;
+      if ("boopRssi" in body) s.boopRssi = Number(body.boopRssi);
+      if ("apPass" in body) s.apLocked = body.apPass.length >= 8;
+      if ("homeSsid" in body && s.apSecured) s.homeSsid = body.homeSsid;
+      return Promise.resolve(s);
+    case "/api/clear":
+      demo.records = [];
+      s.records = 0;
+      return Promise.resolve(s);
+    case "/api/live": {
+      const wobble = () => Math.round((Math.random() - 0.5) * 6);
+      return Promise.resolve({
+        boopRssi: s.boopRssi,
+        nearby: [
+          { peer: "5be1a3f2", rssi: -46 + wobble(), smooth: -47 + wobble(), max: -40, since: 95, ago: 0, boops: 1, close: true },
+          { peer: "2f6b88a0", rssi: -77 + wobble(), smooth: -76 + wobble(), max: -70, since: 30, ago: 1, boops: 0, close: false },
+        ],
+      });
+    }
+  }
+  return Promise.reject(new Error("unknown " + path));
+}
+
+// ---------- model ----------
+
+function encounters() {
+  const sorted = state.records.slice().sort((a, b) => a.boot - b.boot || a.start - b.start);
+  const out = [];
+  const open = new Map();
+  for (const r of sorted) {
+    const e = { peer: r.peer, boot: r.boot, timed: !!r.t, start: r.start, end: r.start + r.dur, boops: r.boops, boopS: r.boopS, rssi: r.rssi };
+    const key = r.peer + "|" + r.boot + "|" + e.timed;
+    const prev = open.get(key);
+    if (prev && e.start - prev.end <= MERGE_GAP_S) {
+      prev.end = Math.max(prev.end, e.end);
+      prev.boops += e.boops;
+      prev.boopS += e.boopS;
+      prev.rssi = Math.max(prev.rssi, e.rssi);
+    } else {
+      out.push(e);
+      open.set(key, e);
+    }
+  }
+  return out;
+}
+
+const pad = (n) => String(n).padStart(2, "0");
+function dayKey(e) {
+  if (!e.timed) return "boot-" + pad(e.boot).padStart(5, "0");
+  const d = new Date(e.start * 1000);
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+}
+
+function dayLabel(key) {
+  if (key.startsWith("boot-")) return "时间不详的一次";
+  const today = new Date();
+  const k = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  if (key === k(today)) return "今天";
+  today.setDate(today.getDate() - 1);
+  if (key === k(today)) return "昨天";
+  const [, m, d] = key.split("-");
+  return Number(m) + "月" + Number(d) + "日";
+}
+
+function byDay(list) {
+  const days = new Map();
+  for (const e of list) {
+    const key = dayKey(e);
+    if (!days.has(key)) days.set(key, []);
+    days.get(key).push(e);
+  }
+  const keys = [...days.keys()].sort((a, b) => {
+    const ba = a.startsWith("boot-"), bb = b.startsWith("boot-");
+    if (ba !== bb) return ba ? 1 : -1;
+    return a < b ? 1 : -1;
+  });
+  return { days, keys };
+}
+
+const shortId = (peer) => peer.slice(4).toUpperCase();
+const nameOf = (peer) => state.labels[peer] || "陌生狗";
+const dogName = () => (state.status && state.status.dogName) || "你家狗";
+
+function closeness(rssi) {
+  const boop = state.status ? state.status.boopRssi : -55;
+  if (rssi >= boop) return "贴得很近";
+  if (rssi >= -68) return "就在身边";
+  if (rssi >= -80) return "几米开外";
+  return "远远路过";
+}
+
+function duration(s) {
+  if (s < 60) return "不到 1 分钟";
+  return Math.round(s / 60) + " 分钟";
+}
+
+function clock(e) {
+  if (!e.timed) return Math.round(e.start / 60) + "′";
+  const d = new Date(e.start * 1000);
+  return pad(d.getHours()) + ":" + pad(d.getMinutes());
+}
+
+function batteryPct(mv) {
+  if (!mv || mv < 2500) return null;
+  const steps = [[3000, 0], [3470, 25], [3610, 50], [3810, 75], [4200, 100]];
+  if (mv <= steps[0][0]) return 0;
+  for (let i = 1; i < steps.length; i++) {
+    const [v1, p1] = steps[i], [v0, p0] = steps[i - 1];
+    if (mv <= v1) return Math.round(p0 + ((mv - v0) / (v1 - v0)) * (p1 - p0));
+  }
+  return 100;
+}
+
+// ---------- nose prints: every collar ID becomes a unique nose ----------
+
+function rng(seed) {
+  return () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const NOSE = "M50 28C60 22 80 22 89 32C97 41 94 56 84 64C76 71 66 74 60 79C56 82 53 84 50 84C47 84 44 82 40 79C34 74 24 71 16 64C6 56 3 41 11 32C20 22 40 22 50 28Z";
+const NOSTRIL_L = "M20 50C24 46 33 47 38 53C41 57 40 62 35 62C31 62 30 58 27 56C24 54 19 54 20 50Z";
+const NOSTRIL_R = "M80 50C76 46 67 47 62 53C59 57 60 62 65 62C69 62 70 58 73 56C76 54 81 54 80 50Z";
+const TONES = [["#2a2524", "#47403e"], ["#5b3e31", "#7a5848"], ["#c4867f", "#dca69f"], ["#37373f", "#55555f"]];
+let svgUid = 0;
+
+function nose(peer, { booped = false, size = 44 } = {}) {
+  const seed = parseInt(peer, 16) >>> 0;
+  const r = rng(seed);
+  const [base, cell] = TONES[seed % TONES.length];
+  const sx = (0.68 + r() * 0.08).toFixed(3), sy = (0.7 + r() * 0.1).toFixed(3);
+  let cells = "";
+  for (let y = 20; y < 88; y += 6.4) {
+    for (let x = 6 + ((y / 6.4) % 2) * 3.2; x < 95; x += 6.4) {
+      const cx = (x + (r() - 0.5) * 2.6).toFixed(1), cy = (y + (r() - 0.5) * 2.6).toFixed(1);
+      cells += `<circle cx="${cx}" cy="${cy}" r="${(1.7 + r() * 1.3).toFixed(2)}"/>`;
+    }
+  }
+  const id = "n" + svgUid++;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true">` +
+    `<defs><clipPath id="${id}"><path d="${NOSE}"/></clipPath></defs>` +
+    `<circle cx="50" cy="50" r="48.5" fill="${booped ? "#d6ea47" : "#ffffff"}" stroke="${booped ? "#c3d63a" : "#dcded5"}" stroke-width="1.5"/>` +
+    `<g transform="translate(50 52) scale(${sx} ${sy}) translate(-50 -52)">` +
+    `<path d="${NOSE}" fill="${base}"/>` +
+    `<g clip-path="url(#${id})" fill="${cell}">${cells}</g>` +
+    `<path d="${NOSTRIL_L}" fill="#141110"/><path d="${NOSTRIL_R}" fill="#141110"/>` +
+    `<path d="M50 66V83" stroke="#141110" stroke-width="2.6" stroke-linecap="round"/>` +
+    `<ellipse cx="36" cy="35" rx="10" ry="4" fill="#fff" opacity=".22" transform="rotate(-10 36 35)"/>` +
+    `</g></svg>`;
+}
+
+// ---------- rendering ----------
+
+function render() {
+  renderDevice();
+  renderWalks();
+  renderFriends();
+  renderSettings();
+}
+
+function renderDevice() {
+  const s = state.status;
+  const pct = batteryPct(s.batteryMv);
+  $("#device").innerHTML = `<b>${esc(dogName())}</b> 的项圈 · ${esc(shortId(s.id))}<br>` +
+    (pct === null ? "接着 USB 电源" : `电量 ${pct}%`);
+}
+
+function renderWalks() {
+  const panel = $("#panel-walks");
+  const { days, keys } = byDay(encounters());
+  if (!keys.length) {
+    panel.innerHTML = `<div class="empty">还没有相遇记录。出门前打开电池底座的开关，遛完回家长按项圈顶上的按键，手机连上它的 Wi-Fi 就能看到。</div>`;
+    return;
+  }
+  if (!state.day || !days.has(state.day)) state.day = keys[0];
+  const list = days.get(state.day).slice().sort((a, b) => b.start - a.start);
+  const dogs = new Set(list.map((e) => e.peer));
+  const boops = list.reduce((n, e) => n + e.boops, 0);
+  const booped = new Set(list.filter((e) => e.boops > 0).map((e) => e.peer));
+  const label = dayLabel(state.day);
+  const when = label === "今天" || label === "昨天" ? label : state.day.startsWith("boot-") ? "那次出门" : "在" + label;
+
+  panel.innerHTML =
+    `<div class="days">${keys.map((k) => `<button aria-pressed="${k === state.day}" data-day="${k}">${esc(dayLabel(k))}</button>`).join("")}</div>` +
+    `<div class="hero">` +
+      `<h1>${esc(dogName())}${esc(when)}遇见了 ${dogs.size} 只狗</h1>` +
+      `<p>${boops ? `碰了 ${boops} 次鼻子，` : "没有碰鼻子，"}一共擦肩 ${list.length} 回</p>` +
+      `<div class="stamps">${[...dogs].map((p) => nose(p, { booped: booped.has(p), size: 58 })).join("")}</div>` +
+    `</div>` +
+    `<ul class="list">${list.map((e) => `<li><button class="row" data-peer="${e.peer}">` +
+      `<span class="when">${clock(e)}</span>${nose(e.peer, { booped: e.boops > 0 })}` +
+      `<span><span class="who">${esc(nameOf(e.peer))}<span class="id">${shortId(e.peer)}</span></span><br>` +
+      `<span class="what">${e.boops ? `<span class="boop">碰鼻 ${e.boops} 次</span> · 贴近 ${e.boopS} 秒` : `擦肩 · ${duration(e.end - e.start)} · ${closeness(e.rssi)}`}</span></span>` +
+      `</button></li>`).join("")}</ul>` +
+    `<button class="primary" id="makeCard">生成${esc(label === "今天" ? "今天" : "这天")}的社交卡片</button>`;
+}
+
+function renderFriends() {
+  const panel = $("#panel-friends");
+  const all = encounters();
+  const friends = new Map();
+  for (const e of all) {
+    const f = friends.get(e.peer) || { peer: e.peer, days: new Set(), times: 0, boops: 0, last: null };
+    f.days.add(dayKey(e));
+    f.times++;
+    f.boops += e.boops;
+    if (e.timed && (!f.last || e.start > f.last)) f.last = e.start;
+    friends.set(e.peer, f);
+  }
+  const list = [...friends.values()].sort((a, b) => b.days.size - a.days.size || b.boops - a.boops || b.times - a.times);
+  if (!list.length) {
+    panel.innerHTML = `<div class="empty">遇见过的狗会出现在这里，见面次数多的排在前面。</div>`;
+    return;
+  }
+  panel.innerHTML =
+    `<div class="hero"><h1>${esc(dogName())}认识 ${list.length} 只狗</h1><p>点一下给它起个名字，名字只存在你自己的项圈里。</p></div>` +
+    `<ul class="list">${list.map((f) => {
+      const last = f.last ? dayLabel(dayKey({ timed: true, start: f.last })) : "时间未知";
+      return `<li><button class="row wide" data-peer="${f.peer}">${nose(f.peer, { booped: f.boops > 0 })}` +
+        `<span><span class="who">${esc(nameOf(f.peer))}<span class="id">${shortId(f.peer)}</span></span><br>` +
+        `<span class="what">见过 ${f.days.size} 天 · ${f.boops ? `<span class="boop">碰鼻 ${f.boops} 次</span>` : "还没碰过鼻子"} · 上次 ${esc(last)}</span></span>` +
+        `</button></li>`;
+    }).join("")}</ul>`;
+}
+
+function renderSettings() {
+  const s = state.status;
+  const pct = batteryPct(s.batteryMv);
+  $("#panel-settings").innerHTML =
+    `<div class="group"><h2>你家狗</h2><div class="box"><div class="field">` +
+      `<input id="dogName" maxlength="16" value="${esc(s.dogName || "")}" placeholder="狗的名字" aria-label="狗的名字">` +
+      `<button class="ghost" data-save="dogName">保存</button></div></div></div>` +
+
+    `<div class="group"><h2>碰鼻灵敏度</h2><div class="box">` +
+      `<p>两只狗戴好项圈，让它们鼻子碰鼻子，再点「用现在的信号」。信号持续 2 秒比门槛强，就算一次碰鼻。</p>` +
+      `<div class="threshold"><button class="ghost" data-boop="-2" aria-label="门槛降低 2">−</button>` +
+      `<strong id="boopValue">${s.boopRssi}</strong><button class="ghost" data-boop="2" aria-label="门槛提高 2">＋</button>` +
+      `<button class="ghost" id="useLive">用现在的信号</button></div>` +
+      `<ul class="list live" id="live"><li><div class="row wide"><span></span><span class="what">正在看附近有哪些项圈…</span></div></li></ul>` +
+    `</div></div>` +
+
+    `<div class="group"><h2>项圈热点</h2><div class="box">` +
+      `<p>${s.apSecured ? "热点已加密。" : "热点现在没有密码，附近的人也能连上看到记录。"}设置后下次长按按键开启时生效。</p>` +
+      `<div class="field"><input id="apPass" type="password" minlength="8" maxlength="63" placeholder="8 位以上的热点密码" aria-label="热点密码">` +
+      `<button class="ghost" data-save="apPass">保存</button></div>` +
+    `</div></div>` +
+
+    `<div class="group"><h2>开机自动对时</h2><div class="box">` +
+      `<p>填上家里的 Wi-Fi，项圈每次开机先连一下家里网络对时，忘了同步也不会丢时间。` +
+      `${s.apSecured ? "" : "为了不让家里的 Wi-Fi 密码在开放热点里明文传输，要先设好热点密码，并连上加密后的热点才能保存。"}</p>` +
+      `<div class="stack"><input id="homeSsid" value="${esc(s.homeSsid || "")}" placeholder="家里 Wi-Fi 名称" aria-label="家里 Wi-Fi 名称" ${s.apSecured ? "" : "disabled"}>` +
+      `<input id="homePass" type="password" placeholder="家里 Wi-Fi 密码" aria-label="家里 Wi-Fi 密码" ${s.apSecured ? "" : "disabled"}>` +
+      `<button class="ghost" data-save="home" ${s.apSecured ? "" : "disabled"}>保存家里 Wi-Fi</button></div>` +
+    `</div></div>` +
+
+    `<div class="group"><h2>记录</h2><div class="box"><div class="field">` +
+      `<button class="ghost" id="export">导出全部记录</button><button class="ghost danger" id="clear">清空记录</button>` +
+    `</div></div></div>` +
+
+    `<div class="group"><h2>这个项圈</h2><div class="box"><dl class="kv">` +
+      `<dt>项圈编号</dt><dd>${esc(s.id)}</dd>` +
+      `<dt>固件版本</dt><dd>${esc(s.fw)}</dd>` +
+      `<dt>开机次数</dt><dd>${s.boot}</dd>` +
+      `<dt>电池</dt><dd>${pct === null ? "—" : `${pct}% · ${(s.batteryMv / 1000).toFixed(2)} V`}</dd>` +
+      `<dt>相遇记录</dt><dd>${s.records} 条</dd>` +
+    `</dl></div></div>`;
+}
+
+async function refreshLive() {
+  const box = $("#live");
+  if (!box || state.tab !== "settings") return;
+  try {
+    state.live = await api("/api/live");
+  } catch (err) {
+    return;
+  }
+  const { nearby, boopRssi } = state.live;
+  if (!nearby.length) {
+    box.innerHTML = `<li><div class="row wide"><span></span><span class="what">附近没有别的项圈。</span></div></li>`;
+    return;
+  }
+  const pos = (v) => Math.max(0, Math.min(100, ((v + 100) / 70) * 100));
+  box.innerHTML = nearby.slice().sort((a, b) => b.smooth - a.smooth).map((n) =>
+    `<li><div class="row">${nose(n.peer, { booped: n.close })}` +
+    `<span><span class="who">${esc(nameOf(n.peer))}<span class="id">${shortId(n.peer)}</span></span>${n.close ? `<span class="tag">正在碰鼻</span>` : ""}` +
+    `<div class="meter"><i style="width:${pos(n.smooth)}%"></i><b style="left:${pos(boopRssi)}%"></b></div></span>` +
+    `<span class="dbm">${n.smooth}</span></div></li>`).join("");
+}
+
+// ---------- share card ----------
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+async function makeCard() {
+  const { days } = byDay(encounters());
+  const list = days.get(state.day) || [];
+  const dogs = [...new Set(list.map((e) => e.peer))];
+  const booped = new Set(list.filter((e) => e.boops > 0).map((e) => e.peer));
+  const boops = list.reduce((n, e) => n + e.boops, 0);
+  const label = dayLabel(state.day);
+
+  const W = 1080, H = 1350;
+  const c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const g = c.getContext("2d");
+  const font = getComputedStyle(document.body).fontFamily;
+  g.fillStyle = "#f1f2ec"; g.fillRect(0, 0, W, H);
+
+  g.fillStyle = "#221e1d";
+  g.font = `800 40px ${font}`;
+  g.fillText("碰鼻", 90, 130);
+  g.fillStyle = "#6d6f68";
+  g.font = `500 34px ${font}`;
+  g.fillText(state.day.startsWith("boot-") ? "某次出门" : label, 90, 190);
+
+  const fitText = (text, y) => {
+    let size = 84;
+    g.font = `750 ${size}px ${font}`;
+    while (g.measureText(text).width > W - 180 && size > 44) g.font = `750 ${(size -= 4)}px ${font}`;
+    g.fillText(text, 90, y);
+  };
+  g.fillStyle = "#221e1d";
+  fitText(`${dogName()}遇见了 ${dogs.length} 只狗`, 330);
+  fitText(boops ? `碰了 ${boops} 次鼻子` : `擦肩 ${list.length} 回`, 440);
+
+  const cols = 4, cell = 210, top = 560;
+  const shown = dogs.slice(0, 12);
+  for (let i = 0; i < shown.length; i++) {
+    const img = await loadImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(nose(shown[i], { booped: booped.has(shown[i]), size: 180 })));
+    const x = 90 + (i % cols) * cell, y = top + Math.floor(i / cols) * cell;
+    g.drawImage(img, x, y, 180, 180);
+  }
+  if (dogs.length > shown.length) {
+    g.fillStyle = "#6d6f68"; g.font = `600 34px ${font}`;
+    g.fillText(`还有 ${dogs.length - shown.length} 只`, 90, top + 3 * cell + 40);
+  }
+
+  g.fillStyle = "#6d6f68";
+  g.font = `500 28px ${font}`;
+  g.fillText("黄底的是碰过鼻子的。每只狗的鼻纹都由它的项圈编号生成。", 90, H - 120);
+  g.fillText("碰鼻 · 开源狗项圈", 90, H - 76);
+
+  const url = c.toDataURL("image/png");
+  $("#cardImg").src = url;
+  $("#cardDownload").href = url;
+  $("#cardDialog").showModal();
+}
+
+// ---------- interactions ----------
+
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+function selectTab(tab) {
+  state.tab = tab;
+  for (const b of document.querySelectorAll(".tabs button")) b.setAttribute("aria-selected", String(b.dataset.tab === tab));
+  for (const p of ["walks", "friends", "settings"]) $("#panel-" + p).hidden = p !== tab;
+  clearInterval(state.liveTimer);
+  if (tab === "settings") {
+    refreshLive();
+    state.liveTimer = setInterval(refreshLive, 1000);
+  }
+  window.scrollTo({ top: 0 });
+}
+
+function askName(peer) {
+  const dialog = $("#nameDialog");
+  $("#nameHint").textContent = `项圈编号 ${shortId(peer)}。名字只存在你自己的项圈里，对方看不到。`;
+  $("#nameInput").value = state.labels[peer] || "";
+  dialog.onclose = async () => {
+    if (dialog.returnValue !== "save") return;
+    state.labels = await api("/api/label", { peer, name: $("#nameInput").value.trim() });
+    render();
+    toast("名字已保存");
+  };
+  dialog.returnValue = "";
+  dialog.showModal();
+}
+
+async function saveSettings(which) {
+  let body;
+  if (which === "dogName") body = { dogName: $("#dogName").value.trim() };
+  if (which === "apPass") {
+    const p = $("#apPass").value;
+    if (p && p.length < 8) return toast("热点密码至少要 8 位");
+    body = { apPass: p };
+  }
+  if (which === "home") body = { homeSsid: $("#homeSsid").value.trim(), homePass: $("#homePass").value };
+  state.status = await api("/api/settings", body);
+  render();
+  toast(which === "apPass" ? "热点密码已保存，下次开启热点时生效" : "已保存");
+}
+
+async function setBoop(value) {
+  const v = Math.max(-100, Math.min(-20, Math.round(value)));
+  state.status = await api("/api/settings", { boopRssi: v });
+  $("#boopValue").textContent = state.status.boopRssi;
+  toast(`碰鼻门槛改成 ${state.status.boopRssi}`);
+}
+
+function exportRecords() {
+  const data = { collar: state.status.id, dogName: state.status.dogName, exportedAt: new Date().toISOString(), labels: state.labels, records: state.records };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+  a.download = `pengbi-${state.status.id}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+document.addEventListener("click", async (ev) => {
+  const el = ev.target.closest("button, a");
+  if (!el) return;
+  try {
+    if (el.dataset.tab) return selectTab(el.dataset.tab);
+    if (el.dataset.day) { state.day = el.dataset.day; return renderWalks(); }
+    if (el.dataset.peer) return askName(el.dataset.peer);
+    if (el.dataset.save) return await saveSettings(el.dataset.save);
+    if (el.dataset.boop) return await setBoop(state.status.boopRssi + Number(el.dataset.boop));
+    if (el.id === "useLive") {
+      const near = state.live && state.live.nearby.slice().sort((a, b) => b.smooth - a.smooth)[0];
+      if (!near) return toast("附近没有别的项圈，先让两只狗靠近");
+      return await setBoop(near.smooth - 3);
+    }
+    if (el.id === "nameCancel") return $("#nameDialog").close("cancel");
+    if (el.id === "makeCard") return await makeCard();
+    if (el.id === "cardClose") return $("#cardDialog").close();
+    if (el.id === "export") return exportRecords();
+    if (el.id === "clear") {
+      if (!confirm("清空这个项圈里的全部相遇记录？给狗起的名字会保留。")) return;
+      state.status = await api("/api/clear", {});
+      state.records = [];
+      render();
+      return toast("记录已清空");
+    }
+  } catch (err) {
+    toast("没成功：" + err.message);
+  }
+});
+
+load().catch((err) => toast("读取项圈失败：" + err.message));
+</script>
+</body>
+</html>
